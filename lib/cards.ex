@@ -8,6 +8,17 @@ defmodule Cards do
     end
   end
 
+  def print_n_times(message, n) when n > 0 do
+    IO.puts(message)
+    print_n_times(message, n-1)
+  end
+
+  def print_n_times(message, n) do
+    :ok
+  end
+
+
+
   def shuffle(deck) do
     Enum.shuffle(deck)
   end
