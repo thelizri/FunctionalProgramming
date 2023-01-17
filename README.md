@@ -1,6 +1,9 @@
 # Cards
 
-**TODO: Add description**
+**Commands**  
+mix new project_name  
+iex -S mix  
+recompile  
 
 ## Installation
 
