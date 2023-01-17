@@ -53,6 +53,8 @@ defmodule Calculus do
   @type expr() :: {:add, expr(), expr()} | {:mul, expr(), expr()} | literal()
   #2x+3
   #{:add, {:mul, {:num, 2}, {:var, :x}}, {:num, 3}}
+
+  #Derivative basic rules
   def deriv({:num, _}, _) do
     {:num, 0}
   end
