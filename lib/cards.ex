@@ -32,6 +32,10 @@ defmodule Cards do
     fib(n-1)+fib(n-2)
   end
 
+  def test({:var, :a}) do
+    {:var, :a}
+  end
+
 end
 
 defmodule Calc do
@@ -63,6 +67,18 @@ defmodule Calculus do
   end
   def deriv({:add, e1, e2}, v) do
     {:add, deriv(e1,v), deriv(e2,v)}
+  end
+  #Power rule
+  def deriv({:exp, {:var, x}, {:num, n}}) do 
+    {:mul, {:num, n}, {:exp, {:var, x}, {:num, n-1}}}
+  end
+  #Log e, ln(x)
+  def deriv({:ln, {:num, x}}) when x > 0 do
+    {:div, {:num, 1}, {:num, x}}
+  end
+  #1/x
+  def deriv({:div, {:num, 1}, {:num, x}}) when x != 0 do
+    {:neg, {:div, {:num, 1}, {:num, x*x}}}
   end
 
   #Pure numbers or variables
