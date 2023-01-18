@@ -3,6 +3,9 @@ defmodule Calculus do
   @type expr() :: {:add, expr(), expr()} | {:mul, expr(), expr()} | literal()
   #2x+3
   #{:add, {:mul, {:num, 2}, {:var, :x}}, {:num, 3}}
+  #5x10x
+  #{:mul, {:mul, {:num, 5}, {:var, :x}}, {:mul, {:num, 10}, {:var, :x}}}
+
 
   #Derivative basic rules
   def deriv({:num, _}, _) do
@@ -22,21 +25,35 @@ defmodule Calculus do
   end
 
   #Power rule
-  def deriv({:exp, {:var, x}, {:num, n}}) do 
+  def deriv({:exp, {:var, x}, {:num, n}}, x) do 
     {:mul, {:num, n}, {:exp, {:var, x}, {:num, n-1}}}
   end
 
   #Log e, ln(x)
-  def deriv({:ln, {:num, x}}) when x > 0 do
-    {:div, {:num, 1}, {:num, x}}
+  def deriv({:ln, {:var, x}}, x) when x > 0 do
+    {:div, {:num, 1}, {:var, x}}
   end
-  
+  def deriv({:ln, {:var, _}}, _) do
+    {:num, 0}
+  end
+
   #1/x
-  def deriv({:div, {:num, 1}, {:num, x}}) when x != 0 do
-    {:neg, {:div, {:num, 1}, {:num, x*x}}}
+  def deriv({:div, {:num, 1}, {:var, x}}, x) when x != 0 do
+    {:neg, {:div, {:num, 1}, {:exp, {:var, x}, {:num, 2}}}}
+  end
+  def deriv({:div, {:num, 1}, {:var, _}}, _) do
+    {:num, 0}
   end
 
+  #sin(x)
+  def deriv({:sin, {:var, x}}, x) do
+    {:cos, x}
+  end
+  def deriv({:sin, {:var, _}}, _) do
+    {:num, 0}
+  end
 
+  #Simplification
   #Pure numbers or variables
   def simplify({:num, a}) do
     {:num, a}
@@ -96,9 +113,30 @@ defmodule Calculus do
     {:mul, {:num, a}, {:var, b}}
   end
 
-
   def simplify({:mul, e1, e2}) do
     simplify({:mul, simplify(e1), simplify(e2)})
+  end
+  def simplify(e) do
+    e
+  end
+
+  def print({:num, x}) do "#{x}" end
+  def print({:var, x}) do "#{x}" end
+  def print({:add, e1, e2}) do "(#{print(e1)}+#{print(e2)})" end
+  def print({:mul, e1, e2}) do "#{print(e1)}*#{print(e2)}" end
+  def print({:exp, e1, e2}) do "#{print(e1)}^(#{print(e2)})" end
+
+  def test() do
+    test =
+      {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}},
+       {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}}
+    IO.write("expression: #{print(test)}\n")
+
+    der = deriv(test, :x)
+    IO.write("derivative: #{print(der)}\n")
+
+    simpl = simplify(der)
+    IO.write("simplified: #{print(simpl)}\n")
   end
 
 end
