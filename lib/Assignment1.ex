@@ -121,6 +121,18 @@ defmodule Calculus do
   def simplify({:mul, {:var, b}, {:num, a}}) do
     {:mul, {:num, a}, {:var, b}}
   end
+  def simplify({:mul, {:mul, {:num, n1}, e2}, {:num, n2}}) do 
+    {:mul, {:num, n1*n2}, simplify(e2)}
+  end
+  def simplify({:mul, {:mul, e2, {:num, n1}}, {:num, n2}}) do 
+    {:mul, {:num, n1*n2}, simplify(e2)}
+  end
+  def simplify({:mul, {:num, n2}, {:mul, e2, {:num, n1}}}) do 
+    {:mul, {:num, n1*n2}, simplify(e2)}
+  end
+  def simplify({:mul, {:num, n2}, {:mul, {:num, n1}, e2}}) do 
+    {:mul, {:num, n1*n2}, simplify(e2)}
+  end
   def simplify({:mul, e1, e2}) do 
     {:mul, simplify(e1), simplify(e2)}
   end
