@@ -20,18 +20,22 @@ defmodule Calculus do
   def deriv({:add, e1, e2}, v) do
     {:add, deriv(e1,v), deriv(e2,v)}
   end
+
   #Power rule
   def deriv({:exp, {:var, x}, {:num, n}}) do 
     {:mul, {:num, n}, {:exp, {:var, x}, {:num, n-1}}}
   end
+
   #Log e, ln(x)
   def deriv({:ln, {:num, x}}) when x > 0 do
     {:div, {:num, 1}, {:num, x}}
   end
+  
   #1/x
   def deriv({:div, {:num, 1}, {:num, x}}) when x != 0 do
     {:neg, {:div, {:num, 1}, {:num, x*x}}}
   end
+
 
   #Pure numbers or variables
   def simplify({:num, a}) do
@@ -45,6 +49,10 @@ defmodule Calculus do
   def simplify({:add, {:num, 0}, e}) do
     simplify(e)
   end
+  def simplify({:add, e, {:num, 0}}) do
+    simplify(e)
+  end
+
   def simplify({:add, {:num, a}, {:num, b}}) do
     {:num, a+b}
   end
@@ -54,6 +62,7 @@ defmodule Calculus do
   def simplify({:add, {:var, a}, {:num, b}}) do
     {:add, {:var, a}, {:num, b}}
   end
+
   def simplify({:add, e1, e2}) do
     simplify({:add, simplify(e1), simplify(e2)})
   end
@@ -62,15 +71,32 @@ defmodule Calculus do
   def simplify({:mul, {:num, 0}, _}) do
     {:num, 0}
   end
+  def simplify({:mul, 0, {:num, 0}}) do
+    {:num, 0}
+  end
+
+  def simplify({:mul, {:num, 1}, e}) do
+    e
+  end
+  def simplify({:mul, e, {:num, 1}}) do
+    e
+  end
+
   def simplify({:mul, {:num, a}, {:num, b}}) do
     {:num, a*b}
   end
   def simplify({:mul, {:var, a}, {:var, b}}) do
     {:mul, {:var, a}, {:var, b}}
   end
+
   def simplify({:mul, {:num, a}, {:var, b}}) do
     {:mul, {:num, a}, {:var, b}}
   end
+  def simplify({:mul, {:var, b}, {:num, a}}) do
+    {:mul, {:num, a}, {:var, b}}
+  end
+
+
   def simplify({:mul, e1, e2}) do
     simplify({:mul, simplify(e1), simplify(e2)})
   end
