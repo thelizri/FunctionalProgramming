@@ -53,6 +53,15 @@ defmodule Calculus do
     {:num, 0}
   end
 
+  #square root of x
+  def deriv({:sqrt, {:var, x}}, x) do
+    {:mul, {:num, 1/2}, {:exp, {:var, x}, {:num, -1/2}}}
+  end
+  def deriv({:sqrt, {:var, _}}, _) do
+    {:num, 0}
+  end
+
+
   #Simplification
   #Pure numbers or variables
   def simplify({:num, a}) do
@@ -118,7 +127,22 @@ defmodule Calculus do
 
   #Other functions
   def simplify({:exp, e1, e2}) do 
-    {:exp, e1, e2}
+    {:exp, simplify(e1), simplify(e2)}
+  end
+  def simplify({:div, e1, e2}) do 
+    {:div, simplify(e1), simplify(e2)}
+  end
+  def simplify({:sqrt, e1}) do 
+    {:sqrt, simplify(e1)}
+  end
+  def simplify({:sin, e1}) do 
+    {:sin, simplify(e1)}
+  end
+  def simplify({:cos, e1}) do 
+    {:cos, simplify(e1)}
+  end
+  def simplify({:neg, e1}) do 
+    {:neg, simplify(e1)}
   end
 
   def callSimplify(e) do
@@ -133,8 +157,10 @@ defmodule Calculus do
 
   def print({:num, x}) do "#{x}" end
   def print({:var, x}) do "#{x}" end
-  def print({:add, e1, e2}) do "(#{print(e1)}+#{print(e2)})" end
-  def print({:mul, e1, e2}) do "#{print(e1)}*#{print(e2)}" end
+  def print({:neg, e}) do " - #{print(e)}" end
+  def print({:sqrt, e}) do "sqrt(#{print(e)})" end
+  def print({:add, e1, e2}) do "(#{print(e1)} + #{print(e2)})" end
+  def print({:mul, e1, e2}) do "#{print(e1)} * #{print(e2)}" end
   def print({:exp, e1, e2}) do "#{print(e1)}^(#{print(e2)})" end
 
   def test() do
@@ -153,18 +179,11 @@ defmodule Calculus do
   end
 
   def test2() do
-    test = {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}
-    IO.write("expression: #{print(test)}\n")
-
-    der = deriv(test, :x)
-    IO.write("derivative: #{print(der)}\n")
-
-    simpl = callSimplify(der)
-    IO.write("simplified: #{print(simpl)}\n")
-  end
-
-  def test3() do
-    test = {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}
+    test =
+      {:mul,
+       {:mul, {:num, 4}, {:sqrt, {:var, :x}}},
+       {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}
+     }
     IO.write("expression: #{print(test)}\n")
 
     der = deriv(test, :x)
