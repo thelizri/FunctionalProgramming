@@ -112,13 +112,15 @@ defmodule Calculus do
   def simplify({:mul, {:var, b}, {:num, a}}) do
     {:mul, {:num, a}, {:var, b}}
   end
+  def simplify({:mul, e1, e2}) do 
+    {:mul, simplify(e1), simplify(e2)}
+  end
 
-  def simplify({:mul, e1, e2}) do
-    simplify({:mul, simplify(e1), simplify(e2)})
+  #Other functions
+  def simplify({:exp, e1, e2}) do 
+    {:exp, e1, e2}
   end
-  def simplify(e) do
-    e
-  end
+
 
   def print({:num, x}) do "#{x}" end
   def print({:var, x}) do "#{x}" end
@@ -130,6 +132,28 @@ defmodule Calculus do
     test =
       {:add, {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}},
        {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}}
+    IO.write("expression: #{print(test)}\n")
+
+    der = deriv(test, :x)
+    IO.write("derivative: #{print(der)}\n")
+
+    simpl = simplify(der)
+    IO.write("simplified: #{print(simpl)}\n")
+  end
+
+  def test2() do
+    test = {:mul, {:num, 4}, {:exp, {:var, :x}, {:num, 2}}}
+    IO.write("expression: #{print(test)}\n")
+
+    der = deriv(test, :x)
+    IO.write("derivative: #{print(der)}\n")
+
+    simpl = simplify(der)
+    IO.write("simplified: #{print(simpl)}\n")
+  end
+
+  def test3() do
+    test = {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}
     IO.write("expression: #{print(test)}\n")
 
     der = deriv(test, :x)
