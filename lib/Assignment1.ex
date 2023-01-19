@@ -64,7 +64,6 @@ defmodule Calculus do
     {:num, 0}
   end
 
-
   #Simplification
   #Pure numbers or variables
   def simplify({:num, a}) do
@@ -110,35 +109,26 @@ defmodule Calculus do
   def simplify({:mul, e, {:num, 1}}) do
     simplify(e)
   end
-
   def simplify({:mul, {:num, a}, {:num, b}}) do
     {:num, a*b}
   end
   def simplify({:mul, {:var, a}, {:var, b}}) do
     {:mul, {:var, a}, {:var, b}}
   end
-
   def simplify({:mul, {:num, a}, {:var, b}}) do
     {:mul, {:num, a}, {:var, b}}
   end
   def simplify({:mul, {:var, b}, {:num, a}}) do
     {:mul, {:num, a}, {:var, b}}
   end
-  def simplify({:mul, {:mul, {:num, n1}, e2}, {:num, n2}}) do 
-    {:mul, {:num, n1*n2}, simplify(e2)}
-  end
-  def simplify({:mul, {:mul, e2, {:num, n1}}, {:num, n2}}) do 
-    {:mul, {:num, n1*n2}, simplify(e2)}
-  end
-  def simplify({:mul, {:num, n2}, {:mul, e2, {:num, n1}}}) do 
-    {:mul, {:num, n1*n2}, simplify(e2)}
-  end
-  def simplify({:mul, {:num, n2}, {:mul, {:num, n1}, e2}}) do 
-    {:mul, {:num, n1*n2}, simplify(e2)}
+  def simplify({:mul, {:mul, {:num, x}, e}, {:num, y}}) do 
+    {:mul, {:num, x*y}, e}    
   end
   def simplify({:mul, e1, e2}) do 
     {:mul, simplify(e1), simplify(e2)}
   end
+
+  #{:add, {:mul, {:mul, {:num, x}, {:exp, {:var, x}, {:num, x}}}, {:add, {:mul, {:num, x}, {:var, x}}, {:num, x}}}, {:mul, {:num, x}, {:mul, {:num, x}, {:sqrt, {:var, x}}}}}
 
   #Other functions
   def simplify({:exp, e1, e2}) do 
@@ -178,6 +168,7 @@ defmodule Calculus do
   def print({:mul, {:var, x}, {:var, y}}) do "#{x}#{y}" end
   def print({:mul, {:var, x}, {:num, y}}) do "#{y}#{x}" end
   def print({:mul, {:num, y}, {:var, x}}) do "#{y}#{x}" end
+  def print({:mul, {:num, x}, y={:exp, _, _}}) do "#{x}#{print(y)}" end
   def print({:mul, e1, e2}) do "#{print(e1)} * #{print(e2)}" end
   def print({:exp, e1, e2}) do "#{print(e1)}^(#{print(e2)})" end
 
@@ -209,6 +200,33 @@ defmodule Calculus do
 
     simpl = callSimplify(der)
     IO.write("simplified: #{print(simpl)}\n")
+  end
+
+  def test3() do
+    test ={:mul, {:var, :x}, {:mul,
+       {:add, {:mul, {:num, 4}, {:var, :x}}, {:num, 10}},
+       {:add, {:mul, {:num, 3}, {:var, :x}}, {:num, 42}}
+     }}
+    IO.write("expression: #{print(test)}\n")
+
+    der = deriv(test, :x)
+    IO.write("derivative: #{print(der)}\n")
+
+    simpl = callSimplify(der)
+    IO.write("simplified: #{print(simpl)}\n")
+  end
+
+  def printTuple({:var, _x}) do
+    "{:var, x}"
+  end
+  def printTuple({:num, _x}) do
+    "{:num, x}"
+  end
+  def printTuple({atom, e1, e2}) do
+    "{:#{atom}, #{printTuple(e1)}, #{printTuple(e2)}}"
+  end
+  def printTuple({atom, e1}) do
+    "{:#{atom}, #{printTuple(e1)}}"
   end
 
 end
