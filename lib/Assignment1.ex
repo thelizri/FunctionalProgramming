@@ -175,6 +175,9 @@ defmodule Calculus do
   def print({:neg, e}) do " - #{print(e)}" end
   def print({:sqrt, e}) do "sqrt(#{print(e)})" end
   def print({:add, e1, e2}) do "(#{print(e1)} + #{print(e2)})" end
+  def print({:mul, {:var, x}, {:var, y}}) do "#{x}#{y}" end
+  def print({:mul, {:var, x}, {:num, y}}) do "#{y}#{x}" end
+  def print({:mul, {:num, y}, {:var, x}}) do "#{y}#{x}" end
   def print({:mul, e1, e2}) do "#{print(e1)} * #{print(e2)}" end
   def print({:exp, e1, e2}) do "#{print(e1)}^(#{print(e2)})" end
 
