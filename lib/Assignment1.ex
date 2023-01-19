@@ -1,6 +1,9 @@
 defmodule Calculus do
-  @type literal() :: {:num, number()} | {:var, atom()}
-  @type expr() :: {:add, expr(), expr()} | {:mul, expr(), expr()} | literal()
+  @type literal :: {:num, number} | {:var, atom}
+   @type expr() :: {:add, expr(), expr()} | {:mul, expr(), expr()} |
+   {:div, expr(), expr()} | {:exp, expr(), expr()} | {:sqrt, expr()} |
+   {:neg, expr()} | {:sin, expr(), expr()} | {:cos, expr(), expr()} |
+   {:ln, expr()} | literal
   #2x+3
   #{:add, {:mul, {:num, 2}, {:var, :x}}, {:num, 3}}
   #5x10x
