@@ -1,4 +1,9 @@
 defmodule Calculus do
+  @moduledoc """
+  Assignment 1. Provides methods for taking the derivative of basic mathematical experssions.
+  """
+
+
   @type literal :: {:num, number} | {:var, atom}
    @type expr() :: {:add, expr(), expr()} | {:mul, expr(), expr()} |
    {:div, expr(), expr()} | {:exp, expr(), expr()} | {:sqrt, expr()} |
