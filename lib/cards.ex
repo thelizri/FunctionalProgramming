@@ -3,11 +3,12 @@ defmodule Cards do
     values = ["Ace","Two","Three", "Four", "Five"]
     suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
-    for suit <- suits do
+    cards = for suit <- suits do
       for value <- values do
-        "#{suit} and #{value}"
+        "#{value} of #{suit}"
       end
     end
+    List.flatten(cards)
   end
 
   def print_n_times(message, n) when n > 0 do
