@@ -1,6 +1,6 @@
 defmodule Cards do
   def create_deck do 
-    values = ["Ace","Two","Three", "Four", "Five"]
+    values = ["Ace","Two","Three", "Four", "Five", "Six", "Seven"]
     suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
     for suit <- suits, value <- values do
@@ -14,6 +14,16 @@ defmodule Cards do
 
   def contains?(deck, hand) do
     Enum.member?(deck,hand)
+  end
+
+  def deal_cards(deck, handsize) do
+    {hand, _rest} = Enum.split(deck, handsize)
+    hand
+  end
+
+  def save_deck(deck, filename) do
+    binary = :erlang.term_to_binary(deck)
+    File.write(filename, binary)
   end
 
 end
