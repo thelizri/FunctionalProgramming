@@ -47,6 +47,22 @@ defmodule EnvTree do
 
 	#def remove({:node, key, _, left, right}, key) do
 
+	def leftmost({:node, key, value, nil, _}) do
+		{key, value}
+	end
+
+	def leftmost({:node, _, _, left, _}) do
+		leftmost(left)
+	end
+
+	def rightmost({:node, key, value, _, nil}) do
+		{key, value}
+	end
+
+	def rightmost({:node, key, value, _, right}) do
+		rightmost(right)
+	end
+
 
 end
 
