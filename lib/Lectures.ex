@@ -26,6 +26,7 @@ defmodule Lecture2 do
 		tailr(t,z) #End with recursive call. Don't need stack since we don't have anything to return and execute.
 	end
 
+	#Uses up stack
 	def union([], y) do y end
 
 	def union([h|t], y) do
