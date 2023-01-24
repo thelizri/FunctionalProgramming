@@ -45,24 +45,30 @@ defmodule EnvTree do
 		left
 	end
 
-	#def remove({:node, key, _, left, right}, key) do
+	def remove({:node, key, _, nil, nil}, key) do
+		nil
+	end
+
+	def remove({:node, key, _, left, right}, key) do
+		{:node, k1, value} = leftmost(right)
+		{:node, k1, value, left, remove(right, k1)}
+	end
+
+	def remove({:node, k, v, left, right}, key) when key < k do
+		{:node, k, v, remove(left, key), right}
+	end
+
+	def remove({:node, k, v, left, right}, key) do
+		{:node, k, v, left, remove(right, key)}
+	end
 
 	def leftmost({:node, key, value, nil, _}) do
-		{key, value}
+		{:node, key, value}
 	end
 
 	def leftmost({:node, _, _, left, _}) do
 		leftmost(left)
 	end
-
-	def rightmost({:node, key, value, _, nil}) do
-		{key, value}
-	end
-
-	def rightmost({:node, key, value, _, right}) do
-		rightmost(right)
-	end
-
 
 end
 
@@ -96,7 +102,7 @@ defmodule EnvList do
 		nil
 	end
 
-	def remove([{key, value}|rest], key) do
+	def remove([{key, _value}|rest], key) do
 		rest
 	end
 
