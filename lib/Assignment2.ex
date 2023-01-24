@@ -20,7 +20,7 @@ defmodule EnvTree do
 	end
 
 	def lookup(nil, _key) do 
-		:notfound
+		nil
 	end
 
 	def lookup({:node, key, value, _left, _right}, key) do
@@ -35,4 +35,57 @@ defmodule EnvTree do
 		lookup(right, key)
 	end
 
+	def remove(nil, _) do nil end
+
+	def remove({:node, key, _, nil, right}, key) do
+		right
+	end
+
+	def remove({:node, key, _, left, nil}, key) do
+		left
+	end
+
+	#def remove({:node, key, _, left, right}, key) do
+
 end
+
+defmodule EnvList do
+
+	def new() do
+		[]
+	end
+
+	def add([], key, value) do
+		[{key, value}]
+	end
+
+	def add(map, key, value) do
+		[{key, value}|map]
+	end
+
+	def lookup([], _key) do
+		nil
+	end
+
+	def lookup([{key, value}|_rest], key) do
+		{key, value}
+	end
+
+	def lookup([{_k, _}|rest], key) do
+		lookup(rest, key)
+	end
+
+	#remove(map, key)
+	def remove([], _key) do
+		nil
+	end
+
+	def remove([{key, value}|rest], key) do
+		rest
+	end
+
+	def remove([head|rest], key) do
+		[head|remove(rest, key)] 
+	end
+
+end 
