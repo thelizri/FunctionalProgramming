@@ -47,6 +47,7 @@ defmodule EnvTree do
 
 	#def remove({:node, key, _, left, right}, key) do
 
+
 end
 
 defmodule EnvList do
@@ -75,7 +76,6 @@ defmodule EnvList do
 		lookup(rest, key)
 	end
 
-	#remove(map, key)
 	def remove([], _key) do
 		nil
 	end
