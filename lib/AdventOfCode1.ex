@@ -1,7 +1,7 @@
 defmodule AOC do
 
 	def read() do
-		{:ok, input} = File.read("lib/input2.txt")
+		{:ok, input} = File.read("lib/input.txt")
 		content = String.split(input, "\r\n\r\n")
 		find_elf(0, 0, 0, content)
 	end
