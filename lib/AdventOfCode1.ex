@@ -2,7 +2,7 @@ defmodule AOC do
 
 	def read() do
 		{:ok, input} = File.read("lib/input2.txt")
-		content = String.split(input, "\n\n")
+		content = String.split(input, "\r\n\r\n")
 		find_elf(0, 0, 0, content)
 	end
 
@@ -10,7 +10,7 @@ defmodule AOC do
 		current_position = curpos+1
 		integers_in_form_of_strings = String.split(head, "\r\n")
 		value = calc(integers_in_form_of_strings, 0)
-		IO.write("Value of position #{current_position} is #{value}")
+		IO.write("Value of position #{current_position} is #{value} \n")
 		if value > max do
 			current_position
 		else
@@ -22,8 +22,8 @@ defmodule AOC do
 		current_position = curpos+1
 		integers_in_form_of_strings = String.split(head, "\r\n")
 		value = calc(integers_in_form_of_strings, 0)
-		IO.write("Value of position #{current_position} is #{value}")
-		
+		IO.write("Value of position #{current_position} is #{value} \n")
+
 		if value > max do
 			find_elf(current_position, current_position, value, rest)
 		else
