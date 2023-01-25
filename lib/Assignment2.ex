@@ -140,7 +140,10 @@ defmodule Benchmark do
 		:io.format("~6.s~12.s~12.s~12.s\n", ["n", "add", "lookup", "remove"])
 
 		#This line doesn't compile
-		#Enum.each(ls, fn (i) -> {i, tla, tll, tlr} = bench(i, n) :io.format("~6.w~12.2f~12.2f~12.2f\n", [i, tla/n, tll/n, tlr/n]) end)
+		Enum.each(ls, fn (i) ->
+		 	{i, tla, tll, tlr} = bench(i, n) 
+			:io.format("~6.w~12.2f~12.2f~12.2f\n", [i, tla/n, tll/n, tlr/n])
+		end)
 	end
 
 end
