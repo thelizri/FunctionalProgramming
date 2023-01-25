@@ -6,15 +6,13 @@ defmodule AOC do
 		find_elf(0, 0, 0, content)
 	end
 
-	def find_elf(curpos, maxpos, max, [head]) do
-		current_position = curpos+1
+	def find_elf(_curpos, _maxpos, max, [head]) do
 		integers_in_form_of_strings = String.split(head, "\r\n")
 		value = calc(integers_in_form_of_strings, 0)
-		IO.write("Value of position #{current_position} is #{value} \n")
 		if value > max do
-			current_position
+			value
 		else
-			maxpos
+			max
 		end
 	end
 
@@ -22,8 +20,6 @@ defmodule AOC do
 		current_position = curpos+1
 		integers_in_form_of_strings = String.split(head, "\r\n")
 		value = calc(integers_in_form_of_strings, 0)
-		IO.write("Value of position #{current_position} is #{value} \n")
-
 		if value > max do
 			find_elf(current_position, current_position, value, rest)
 		else
