@@ -49,4 +49,19 @@ defmodule Day3 do
 		}
 	end
 
+	def evalFirst(string) do
+		map = getBoolHashMap()
+		charlist = String.split(string, "", trim: true)
+		evalFirst(charlist, map)
+	end
+
+	def evalFirst([head], map) do
+		Map.replace(map, head, true)
+	end
+
+	def evalFirst([head|rest], map) do
+		map = Map.replace(map, head, true)
+		evalFirst(rest, map)
+	end
+
 end
