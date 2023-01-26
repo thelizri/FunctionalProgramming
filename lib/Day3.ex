@@ -8,19 +8,22 @@ defmodule Day3 do
 		list(content, 0)
 	end
 
-	def list([head], _score) do
+	def list([head], score) do
 		length = String.length(head)
 		length = Integer.floor_div(length, 2)
-		{first, _last} = String.split_at(head, length)
-		IO.write("#{first} \n")
+		{first, last} = String.split_at(head, length)
+		boolMap = evalFirst(first)
+		addValue = evalSecond(last, boolMap)
+		score+addValue
 	end
 
-	def list([head|tail], _score) do
+	def list([head|tail], score) do
 		length = String.length(head)
 		length = Integer.floor_div(length, 2)
-		{first, _last} = String.split_at(head, length)
-		IO.write("#{first} \n")
-		list(tail, 0)
+		{first, last} = String.split_at(head, length)
+		boolMap = evalFirst(first)
+		addValue = evalSecond(last, boolMap)
+		list(tail, score+addValue)
 	end
 
 	def getValueHashMap() do
@@ -62,6 +65,22 @@ defmodule Day3 do
 	def evalFirst([head|rest], map) do
 		map = Map.replace(map, head, true)
 		evalFirst(rest, map)
+	end
+
+	def evalSecond(string, boolMap) do
+		valueMap = getValueHashMap()
+		charlist = String.split(string, "", trim: true)
+		evalSecond(charlist, boolMap, valueMap, 0)
+	end
+
+	def evalSecond([head|rest], boolMap, valueMap, score) do
+		{:ok, isVisited }= Map.fetch(boolMap, head)
+		if isVisited do
+			{:ok, value} = Map.fetch(valueMap, head)
+			score + value
+		else
+			evalSecond(rest, boolMap, valueMap, score)
+		end
 	end
 
 end
