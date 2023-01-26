@@ -75,15 +75,23 @@ end
 defmodule EnvList do
 
 	def new() do
-		[]
+		nil
+	end
+
+	def add(nil, key, value) do
+		[{key, value}]
 	end
 
 	def add([], key, value) do
 		[{key, value}]
 	end
 
-	def add(map, key, value) do
-		[{key, value}|map]
+	def add([{key, _}|rest], key, value) do
+		[{key, value}|rest]
+	end
+
+	def add([head|rest], key, value) do
+		[head|add(rest, key, value)]
 	end
 
 	def lookup([], _key) do
