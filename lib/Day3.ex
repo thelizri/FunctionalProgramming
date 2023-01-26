@@ -23,7 +23,7 @@ defmodule Day3 do
 		list(tail, 0)
 	end
 
-	def getHashMap() do
+	def getValueHashMap() do
 		%{"a" => 1, "b" => 2, "c" => 3, 
 			"d" => 4, "e" => 5, "f" => 6, "g" => 7, "h" => 8, "i" => 9,
 			"j" => 10, "k" => 11, "l" => 12, "m" => 13, "n" => 14, "o" => 15,
@@ -33,6 +33,19 @@ defmodule Day3 do
 			"H" => 34, "I" => 35, "J" => 36, "K" => 37, "L" => 38, "M" => 39,
 			"N" => 40, "O" => 41, "P" => 42, "Q" => 43, "R" => 44, "S" => 45,
 			"T" => 46, "U" => 47, "V" => 48, "W" => 49, "X" => 50, "Y" => 51, "Z" => 52
+		}
+	end
+
+	def getBoolHashMap() do
+		%{"a" => false, "b" => false, "c" => false, 
+			"d" => false, "e" => false, "f" => false, "g" => false, "h" => false, "i" => false,
+			"j" => false, "k" => false, "l" => false, "m" => false, "n" => false, "o" => false,
+			"p" => false, "q" => false, "r" => false, "s" => false, "t" => false, "u" => false,
+			"v" => false, "w" => false, "x" => false, "y" => false, "z" => false, "A" => false,
+			"B" => false, "C" => false, "D" => false, "E" => false, "F" => false, "G" => false,
+			"H" => false, "I" => false, "J" => false, "K" => false, "L" => false, "M" => false,
+			"N" => false, "O" => false, "P" => false, "Q" => false, "R" => false, "S" => false,
+			"T" => false, "U" => false, "V" => false, "W" => false, "X" => false, "Y" => false, "Z" => false
 		}
 	end
 
