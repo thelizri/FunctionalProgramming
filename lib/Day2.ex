@@ -60,7 +60,7 @@ defmodule Day2 do
 	def read() do
 		{:ok, input} = File.read("lib/Day2.txt")
 		content = String.split(input, "\r\n")
-		evaluate_row(content, 0)
+		evaluate_row2(content, 0)
 	end
 
 	def evaluate_row([head], score) do
@@ -76,6 +76,43 @@ defmodule Day2 do
 		me = stringToAtom(me)
 		result = score + totalScore(op, me)
 		evaluate_row(rest, result)
+	end
+
+	#Part2
+	#X = lose, Y = draw, Z = Win
+	def getMyHand(opponent, "X") do
+		case opponent do
+			:rock -> :scissors
+			:paper -> :rock
+			:scissors -> :paper
+		end
+	end
+
+	def getMyHand(opponent, "Y") do
+		opponent
+	end
+
+	def getMyHand(opponent, "Z") do
+		case opponent do
+			:rock -> :paper
+			:paper -> :scissors
+			:scissors -> :rock
+		end
+	end
+
+	def evaluate_row2([head], score) do
+		[op, me] = String.split(head, " ")
+		op = stringToAtom(op)
+		me = getMyHand(op, me)
+		score + totalScore(op, me)
+	end
+
+	def evaluate_row2([head|rest], score) do
+		[op, me] = String.split(head, " ")
+		op = stringToAtom(op)
+		me = getMyHand(op, me)
+		result = score + totalScore(op, me)
+		evaluate_row2(rest, result)
 	end
 
 end
