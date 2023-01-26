@@ -1,4 +1,4 @@
-defmodule AOC do
+defmodule Day1 do
 
 	def read() do
 		{:ok, input} = File.read("lib/input.txt")
