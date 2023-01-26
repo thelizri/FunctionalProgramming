@@ -5,7 +5,7 @@ defmodule Day3 do
 	def read() do
 		{:ok, input} = File.read("lib/Day3.txt")
 		content = String.split(input, "\r\n")
-		list(content, 0)
+		loop_rows(content, 0, getValueHashMap())
 	end
 
 	def list([head], score) do
@@ -81,6 +81,34 @@ defmodule Day3 do
 		else
 			evalSecond(rest, boolMap, valueMap, score)
 		end
+	end
+
+	#Part 2
+	def create_set(string) do
+		list = String.split(string, "", trim: true)
+		MapSet.new(list)
+	end
+
+	def loop_rows([first, second, third], score, valueMap) do
+		set1 = create_set(first)
+		set2 = create_set(second)
+		set3 = create_set(third)
+		intersection = MapSet.intersection(set1, set2)
+		intersection = MapSet.intersection(intersection, set3)
+		[letter] = MapSet.to_list(intersection)
+		value = valueMap[letter]
+		score + value
+	end
+
+	def loop_rows([first, second, third|rest], score, valueMap) do
+		set1 = create_set(first)
+		set2 = create_set(second)
+		set3 = create_set(third)
+		intersection = MapSet.intersection(set1, set2)
+		intersection = MapSet.intersection(intersection, set3)
+		[letter] = MapSet.to_list(intersection)
+		value = valueMap[letter]
+		loop_rows(rest, score + value, valueMap)
 	end
 
 end
