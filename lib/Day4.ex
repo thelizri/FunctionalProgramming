@@ -7,12 +7,12 @@ defmodule Day4 do
 	end
 
 	def for_list([head], score) do
-		valueForRow = evaluate_row(head)
+		valueForRow = overlap(head)
 		score+valueForRow
 	end
 
 	def for_list([head|rest], score) do
-		valueForRow = evaluate_row(head)
+		valueForRow = overlap(head)
 		for_list(rest, score+valueForRow)
 	end
 
@@ -34,6 +34,18 @@ defmodule Day4 do
 		last = String.to_integer(last)
 		list = Enum.to_list(first..last)
 		MapSet.new(list)
+	end
+
+	#part 2, check if they have an intersection
+	def overlap(row) do
+		[first, last] = String.split(row, ",")
+		first = eval_range(first)
+		last = eval_range(last)
+		if MapSet.disjoint?(first, last) do
+			0
+		else
+			1
+		end
 	end
 
 end
