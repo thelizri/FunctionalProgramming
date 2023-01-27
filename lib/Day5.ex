@@ -31,7 +31,7 @@ defmodule Day5 do
 	def execute_program([{from, to, amount}|tail], data) do
 		fromData = elem(data, from-1)
 		toData = elem(data, to-1)
-		{fromData, toData} = move(fromData, toData, amount)
+		{fromData, toData} = move2(fromData, toData, amount)
 		data = put_elem(data, from-1, fromData)
 		data = put_elem(data, to-1, toData)
 		execute_program(tail, data)
@@ -58,6 +58,14 @@ defmodule Day5 do
 			result = Enum.at(elem(data, colNum), 0)
 			IO.write("#{result}")
 		end
+	end
+
+	#Part2
+
+	def move2(from, to, amount) do
+		{cargo, from} = Enum.split(from, amount)
+		to = cargo ++ to
+		{from, to}
 	end
 
 end
