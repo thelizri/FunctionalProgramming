@@ -35,3 +35,25 @@ defmodule Lecture2 do
 	end
 
 end
+
+defmodule Lecture4 do
+
+	#Accumulating parameter
+
+	def reverse(x) do reverse(x, []) end
+	def reverse([], reversed) do reversed end
+	def reverse([head|tail], reversed) do reverse(tail, [head|reversed]) end
+
+	#All recursive functions can be turned into tail recursive functions
+	#Using tail recursion can increase the complexity, which needs to be kept in mind
+
+	def flat([]) do [] end
+	def flat(x) do flat(x, []) end
+
+	def flat([], plank) do plank end
+	def flat([head|tail], plank) do flat(tail, plank ++ head) end
+
+	#Get n:th element of a list: Enum.at(list, n)
+	def getNelem(list, n) do Enum.at(list, n) end
+
+end
