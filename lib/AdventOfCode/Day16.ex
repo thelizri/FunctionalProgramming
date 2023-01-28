@@ -1,4 +1,7 @@
 defmodule Day16 do
+	#30 minutes before the volcano erupts
+	#All tunnels take one minute to travel through
+	#Each valve takes one minute to open
 
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
