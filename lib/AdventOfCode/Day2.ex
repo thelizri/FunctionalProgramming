@@ -58,7 +58,7 @@ defmodule Day2 do
 	end
 
 	def read() do
-		{:ok, input} = File.read("lib/Day2.txt")
+		{:ok, input} = File.read("lib/AdventOfCode/Day2.txt")
 		content = String.split(input, "\r\n")
 		evaluate_row2(content, 0)
 	end

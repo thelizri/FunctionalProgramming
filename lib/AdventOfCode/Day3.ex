@@ -3,7 +3,7 @@ defmodule Day3 do
 	#a-z = 1-26, A-Z = 27-52
 
 	def read() do
-		{:ok, input} = File.read("lib/Day3.txt")
+		{:ok, input} = File.read("lib/AdventOfCode/Day3.txt")
 		content = String.split(input, "\r\n")
 		loop_rows(content, 0, getValueHashMap())
 	end

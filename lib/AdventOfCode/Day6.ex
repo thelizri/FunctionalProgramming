@@ -1,7 +1,7 @@
 defmodule Day6 do
 
 	def read() do
-		{_status, content} = File.read("lib/Day6.txt")
+		{_status, content} = File.read("lib/AdventOfCode/Day6.txt")
 		list = String.to_charlist(content)
 		last14 = [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil]
 		processing(list, 1, last14)

@@ -1,7 +1,7 @@
 defmodule Day4 do
 
 	def read() do
-		{:ok, input} = File.read("lib/Day4.txt")
+		{:ok, input} = File.read("lib/AdventOfCode/Day4.txt")
 		content = String.split(input, "\r\n")
 		for_list(content, 0)
 	end

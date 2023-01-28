@@ -1,7 +1,7 @@
 defmodule Day1 do
 
 	def read() do
-		{:ok, input} = File.read("lib/Day1.txt")
+		{:ok, input} = File.read("lib/AdventOfCode/Day1.txt")
 		content = String.split(input, "\r\n\r\n")
 		max = top_3(content, {0,0,0})
 		sum(max)

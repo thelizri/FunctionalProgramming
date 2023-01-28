@@ -8,7 +8,7 @@ defmodule Day5 do
 	end
 
 	def read() do
-		{_, content} = File.read("lib/Day5.txt")
+		{_, content} = File.read("lib/AdventOfCode/Day5.txt")
 		rows = String.split(content, "\r\n")
 		commands = for row <- rows do
 			evaluate_row(row)
