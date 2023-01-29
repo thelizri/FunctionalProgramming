@@ -34,16 +34,16 @@ defmodule BellmanFord do
 			local_map = for {a, b} <- links do
 				{a, b+current_distance}
 			end
-			compare_map_to_local(map, local_map)
+			update_map(map, local_map)
 			|> algo(rest)
 		end
 	end
 
-	def compare_map_to_local(map, []) do
+	def update_map(map, []) do
 		map
 	end
 
-	def compare_map_to_local(map, [head|rest]) do
+	def update_map(map, [head|rest]) do
 		{node, distance} = head
 		map_distance = map[node]
 		map = cond do
@@ -51,7 +51,7 @@ defmodule BellmanFord do
 			distance < map_distance -> Map.replace(map, node, distance)
 			true -> map
 		end
-		compare_map_to_local(map, rest)
+		update_map(map, rest)
 	end
 
 end
