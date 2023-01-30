@@ -11,17 +11,17 @@ defmodule Day7 do
 	end
 
 	def execute([head|rest], tree) do
-		cond do
-			head == "$ cd /" -> IO.write("Go to root\n")
-			head == "$ cd .." -> IO.write("Move up\n")
-			head == "$ ls" -> IO.write("List\n")
-			Regex.match?(~r/dir [a-zA-Z]+/, head) -> IO.write("Add directory\n")
-			Regex.match?(~r/\$ cd [a-zA-Z]+/, head) -> IO.write("Move into directory\n")
-			Regex.match?(~r/\d+ .+/, head) -> IO.write("Add file\n")
-			true -> IO.write("Unrecognized\n")
+		case String.split(head, " ") do
+			["$", "cd", "/"] -> IO.write("Root\n")
+			["$", "cd", ".."] -> IO.write("Go back\n")
+			["$", "cd", name] -> IO.write("Enter directory: #{name}\n")
+			["$", "ls"] -> IO.write("List\n")
+			["dir", name] -> IO.write("List directory: #{name}\n")
+			[size, name] -> IO.write("List file: #{name}, of size: #{size}\n")
 		end
 		execute(rest, tree)
 	end
+
 
 	def final(tree) do
 		tree
