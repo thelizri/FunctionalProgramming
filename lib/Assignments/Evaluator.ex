@@ -90,4 +90,11 @@ defmodule Evaluation do
 		eval(exp, env) |> :io.write
 	end
 
+	def test3() do
+		#2*(3/4)
+		exp = {:mul, {:num, 2}, {:q, 3, 4}}
+		env = create_environment([{:x, 10}])
+		eval(exp, env) |> :io.write
+	end
+
 end
