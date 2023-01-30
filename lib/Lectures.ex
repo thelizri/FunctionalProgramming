@@ -57,17 +57,3 @@ defmodule Lecture4 do
 	def getNelem(list, n) do Enum.at(list, n) end
 
 end
-
-
-defmodule Evaluation do
-
-	#x+5*2, find a better way to express it
-
-	#atom ::= :a | :b | :c | ...
-	#variable ::= x | y | z | ...
-	#literal ::= <atom>
-	#expression ::= <literal> | <variable> | '{' expression ',' expression '}'
-	#pattern ::= <literal> | <variable> | '_' | '{' <pattern> ',' <pattern> '}'
-
-
-end
