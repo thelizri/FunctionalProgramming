@@ -9,9 +9,9 @@ defmodule Evaluation do
 
 	def create_environment(_) do nil end
 
-	def create_environment([], map) do map end
+	defp create_environment([], map) do map end
 
-	def create_environment([{key, value}|rest], map) do
+	defp create_environment([{key, value}|rest], map) do
 		map = Map.put(map, key, value)
 		create_environment(rest, map)
 	end
