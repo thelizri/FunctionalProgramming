@@ -23,9 +23,9 @@ defmodule Day7 do
 	end
 
 	def final(map) do
-		{map, _} = findSize(:root, map)
-		Map.to_list(map)
-		#|> findSum(0)
+		{this, _} = findSize(:root, map)
+		Map.to_list(this)
+		|> findSum(0)
 	end
 
 	def findSum([], sum) do
@@ -64,6 +64,7 @@ defmodule Day7 do
 		{parent, _, list} = map[dir]
 		{map, result} = forLoop(list, map, [])
 		size = Enum.sum(result)
+		IO.write("Directory: #{dir}. Size: #{size}\n")
 		map = Map.put(map, dir, {parent, size, list})
 		{map, size}
 	end
