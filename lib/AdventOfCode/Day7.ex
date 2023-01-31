@@ -23,7 +23,22 @@ defmodule Day7 do
 	end
 
 	def final(map) do
-		map
+		{map, _} = findSize(:root, map)
+		Map.to_list(map)
+		#|> findSum(0)
+	end
+
+	def findSum([], sum) do
+		sum
+	end
+
+	def findSum([head|list], sum) do
+		{_, {_, size, _}} = head
+		if size <= 100000 do
+			findSum(list, size+sum)
+		else
+			findSum(list, sum)
+		end
 	end
 
 	def getParent(map, directory) do
@@ -43,6 +58,28 @@ defmodule Day7 do
 		num = String.to_integer(size)
 		list = list ++ [num]
 		Map.put(map, directory, {a, b, list})
+	end
+
+	def findSize(dir, map) do
+		{parent, _, list} = map[dir]
+		{map, result} = forLoop(list, map, [])
+		size = Enum.sum(result)
+		map = Map.put(map, dir, {parent, size, list})
+		{map, size}
+	end
+
+	def forLoop([], map, result) do
+		{map, result}
+	end
+
+	def forLoop([head|rest], map, result) do
+		{map, result} = if is_number(head) do
+			{map, result ++ [head]}
+		else
+			{map, size} = findSize(head, map)
+			{map, result ++ [size]}
+		end
+		forLoop(rest, map, result)
 	end
 
 end
