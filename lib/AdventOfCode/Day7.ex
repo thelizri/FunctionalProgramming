@@ -3,7 +3,7 @@ defmodule Day7 do
 	def read() do
 		{_status, content} = File.read("lib/AdventOfCode/Day7.txt")
 		list = String.split(content, "\r\n")
-		execute(list, %{:root => {nil, :size, []}}, nil)
+		execute(list, %{"root/" => {nil, :size, []}}, "root/")
 	end
 
 	def execute([], map, _) do
@@ -12,9 +12,9 @@ defmodule Day7 do
 
 	def execute([head|rest], map, current_directory) do
 		{map, current_directory} = case String.split(head, " ") do
-			["$", "cd", "/"] -> {map, :root}
+			["$", "cd", "/"] -> {map, "root/"}
 			["$", "cd", ".."] -> {map, getParent(map, current_directory)}
-			["$", "cd", name] -> {map, name}
+			["$", "cd", name] -> {map, getDirectoryName(current_directory, name)}
 			["$", "ls"] -> {map, current_directory}
 			["dir", name] -> {addDirectory(map, current_directory, name), current_directory}
 			[size, _name] -> {addFile(map, current_directory, size), current_directory}
@@ -22,8 +22,12 @@ defmodule Day7 do
 		execute(rest, map, current_directory)
 	end
 
+	def getDirectoryName(parent, child) do
+		parent <> "/" <> child
+	end
+
 	def final(map) do
-		{this, _} = findSize(:root, map)
+		{this, _} = findSize("root/", map)
 		Map.to_list(this)
 		|> findSum(0)
 	end
@@ -47,9 +51,10 @@ defmodule Day7 do
 	end
 
 	def addDirectory(map, parent, newDir) do
-		map = Map.put(map, newDir, {parent, :size, []})
+		key = parent <> "/" <> newDir
+		map = Map.put(map, key, {parent, :size, []})
 		{a, b, list} = map[parent]
-		list = list ++ [newDir]
+		list = list ++ [key]
 		Map.put(map, parent, {a, b, list})
 	end
 
@@ -64,7 +69,6 @@ defmodule Day7 do
 		{parent, _, list} = map[dir]
 		{map, result} = forLoop(list, map, [])
 		size = Enum.sum(result)
-		IO.write("Directory: #{dir}. Size: #{size}\n")
 		map = Map.put(map, dir, {parent, size, list})
 		{map, size}
 	end
