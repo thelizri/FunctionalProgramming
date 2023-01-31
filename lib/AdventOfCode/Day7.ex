@@ -28,8 +28,9 @@ defmodule Day7 do
 
 	def final(map) do
 		{this, _} = findSize("root/", map)
-		Map.to_list(this)
-		|> findSum(0)
+		list = Map.to_list(this)
+		neededSpace = findSizeOfRoot(list)
+		findPossibleDirectories(list, neededSpace, [])
 	end
 
 	def findSum([], sum) do
@@ -85,6 +86,32 @@ defmodule Day7 do
 			{map, result ++ [size]}
 		end
 		forLoop(rest, map, result)
+	end
+
+	#Part 2
+
+	def findSizeOfRoot([head|rest]) do
+		{name, {_parent, size, _}} = head
+		if name == "root/" do
+			unused = 70000000 - size
+			needed = 30000000 - unused
+		else
+			findSizeOfRoot(rest)
+		end
+	end
+
+	def findPossibleDirectories([], neededSize, result) do
+		Enum.sort(result)
+	end
+
+	def findPossibleDirectories([head|rest], neededSize, result) do
+		{_, {_, size, _}} = head
+		if size >= neededSize do
+			result = result ++ [size]
+			findPossibleDirectories(rest, neededSize, result)
+		else
+			findPossibleDirectories(rest, neededSize, result)
+		end
 	end
 
 end
