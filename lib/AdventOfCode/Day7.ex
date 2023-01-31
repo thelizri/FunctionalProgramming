@@ -3,44 +3,46 @@ defmodule Day7 do
 	def read() do
 		{_status, content} = File.read("lib/AdventOfCode/Day7.txt")
 		list = String.split(content, "\r\n")
-		execute(list, new())
+		execute(list, %{:root => {nil, :size, []}}, nil)
 	end
 
-	def execute([], tree) do
-		final(tree)
+	def execute([], map, _) do
+		final(map)
 	end
 
-	def execute([head|rest], tree) do
-		case String.split(head, " ") do
-			["$", "cd", "/"] -> IO.write("Root\n")
-			["$", "cd", ".."] -> IO.write("Go back\n")
-			["$", "cd", name] -> IO.write("Enter directory: #{name}\n")
-			["$", "ls"] -> IO.write("List\n")
-			["dir", name] -> IO.write("List directory: #{name}\n")
-			[size, name] -> IO.write("List file: #{name}, of size: #{size}\n")
+	def execute([head|rest], map, current_directory) do
+		{map, current_directory} = case String.split(head, " ") do
+			["$", "cd", "/"] -> {map, :root}
+			["$", "cd", ".."] -> {map, getParent(map, current_directory)}
+			["$", "cd", name] -> {map, name}
+			["$", "ls"] -> {map, current_directory}
+			["dir", name] -> {addDirectory(map, current_directory, name), current_directory}
+			[size, _name] -> {addFile(map, current_directory, size), current_directory}
 		end
-		execute(rest, tree)
+		execute(rest, map, current_directory)
 	end
 
-
-	def final(tree) do
-		tree
+	def final(map) do
+		map
 	end
 
-	def new() do
-		{"/", :unknown, []}
+	def getParent(map, directory) do
+		{parent, _, _} = map[directory]
+		parent
 	end
 
-	def add({a, b, list}, new) do
-		{a, b, list ++ new}
+	def addDirectory(map, parent, newDir) do
+		map = Map.put(map, newDir, {parent, :size, []})
+		{a, b, list} = map[parent]
+		list = list ++ [newDir]
+		Map.put(map, parent, {a, b, list})
 	end
 
-	def down([{target, size, list}|rest], target) do
-		{target, size, list}
-	end
-
-	def down([head|rest], target) do
-		down(rest, target)
+	def addFile(map, directory, size) do
+		{a, b, list} = map[directory]
+		num = String.to_integer(size)
+		list = list ++ [num]
+		Map.put(map, directory, {a, b, list})
 	end
 
 end
