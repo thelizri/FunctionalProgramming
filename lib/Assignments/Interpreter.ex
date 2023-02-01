@@ -19,6 +19,8 @@ defmodule Eager do
 		end
 	end
 
+	def eval_match(:ignore, _, env) do {:ok, env} end
+
 	def eval_match({:atm, id}, id, env) do {:ok, env} end
 	def eval_match({:var, key}, value, env) do 
 		if is_atom(key) and is_atom(value) do
@@ -36,5 +38,35 @@ defmodule Eager do
 		eval_match({:var, x}, a, env)
 	end
 	
-	def eval_match({:cons, {:var, x}, {:var, x}}, {a, b}, _) do :fail end
+	def eval_match({:cons, {:var, x}, {:var, x}}, {_a, _b}, _) do :fail end
+
+	def eval_match(_, _, _) do :fail end
+
+	def eval_scope(..., ...) do 
+
+	end
+
+	def eval_seq([exp], env) do 
+
+	end
+
+	def eval_seq([{:match, ..., ...} | ...], ...) do
+
+	end
+
+	def extract_vars(seq) do
+		extract_vars(seq, [])
+	end
+
+	defp extract_vars([], result) do
+		result
+	end
+
+	defp extract_vars([head|rest], result) do
+		result = case head do
+			{:var, x} -> ^result ++ [{:var, x}]
+			_ -> result
+		end
+		extract_vars(rest, result)
+	end
 end
