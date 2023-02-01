@@ -21,9 +21,14 @@ defmodule Eager do
 
 	def eval_match({:atm, id}, id, env) do {:ok, env} end
 	def eval_match({:var, key}, value, env) do 
-		cond do
-			is_atom(key) and is_atom(value) -> {:ok, Env.add(key, value, env)}
-			true -> :error
+		if is_atom(key) and is_atom(value) do
+			case Env.lookup(key, env) do
+				nil -> {:ok, Env.add(key, value, env)}
+				{_, ^value} -> {:ok, env}
+				{_, _} -> :fail
+			end
+		else
+			:error
 		end
 	end 
 end
