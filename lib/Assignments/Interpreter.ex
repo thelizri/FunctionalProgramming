@@ -31,4 +31,10 @@ defmodule Eager do
 			:error
 		end
 	end 
+
+	def eval_match({:cons, {:var, x}, {:var, x}}, {a, a}, env) do 
+		eval_match({:var, x}, a, env)
+	end
+	
+	def eval_match({:cons, {:var, x}, {:var, x}}, {a, b}, _) do :fail end
 end
