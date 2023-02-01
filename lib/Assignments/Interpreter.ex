@@ -1,6 +1,6 @@
 defmodule Eager do
 
-	def eval_expr({:atm, id}, env) do 
+	def eval_expr({:atm, id}, _env) do 
 		{:ok, id}
 	end
 
@@ -18,4 +18,12 @@ defmodule Eager do
 			{{:ok, str1},{:ok, str2}} -> {:ok, str1, str2}
 		end
 	end
+
+	def eval_match({:atm, id}, id, env) do {:ok, env} end
+	def eval_match({:var, key}, value, env) do 
+		cond do
+			is_atom(key) and is_atom(value) -> {:ok, Env.add(key, value, env)}
+			true -> :error
+		end
+	end 
 end
