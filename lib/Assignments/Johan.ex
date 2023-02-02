@@ -41,15 +41,23 @@ defmodule JohanEager do
   """
   @spec eval_seq([expr], env) :: {:ok, str} | :error
 
-  def eval_seq([exp], env) do eval_expr(exp, env) end
-
-  def eval_seq([{:match, pattern, exp} | seq], env) do
+  def eval_seq([exp], env) do
+    eval_expr(exp, env)
+  end
+  def eval_seq([{:match, ptr, exp} | seq], env) do
     case eval_expr(exp, env) do
-      :error -> :error
-      {:ok, str} -> env = eval_scope(pattern, env)
-        case eval_match(pattern, str, env) do
-          :fail -> :error
-          {:ok, env} -> eval_seq(seq, env)
+      :error ->
+        :error
+
+      {:ok, str} ->
+  env = eval_scope(ptr, env)
+
+        case eval_match(ptr, str, env) do
+          :fail ->
+            :error
+
+          {:ok, env} ->
+            eval_seq(seq, env)
         end
     end
   end
@@ -58,34 +66,42 @@ defmodule JohanEager do
   Evaluate an expression given an environment and a program. 
   """
   @spec eval_expr(expr, env) :: {:ok, str} | :error
-
-  def eval_expr({:atm, id}, _) do {:ok, id} end
-
+  def eval_expr({:atm, id}, _) do
+    {:ok, id}
+  end
   def eval_expr({:var, id}, env) do
     case Env.lookup(id, env) do
-      nil -> IO.puts("variable binding for #{id} not present"); :error
-      {_, str} -> {:ok, str}
+      nil ->
+  IO.puts("variable binding for #{id} not present")
+        :error
+
+      {_, str} ->
+        {:ok, str}
     end
   end
+  def eval_expr({:cons, he, te}, env) do
+    case eval_expr(he, env) do
+      :error ->
+        :error
 
-  def eval_expr({:cons, left, right}, env) do
-    case eval_expr(left, env) do
-      :error -> :error
-      {:ok, str1} ->
-        case eval_expr(right, env) do
-          :error -> :error
-          {:ok, str2} -> {:ok, {str1 , str2}}   
+      {:ok, hs} ->
+        case eval_expr(te, env) do
+          :error ->
+            :error
+          {:ok, ts} ->
+            {:ok, {hs , ts}}   
         end
     end
   end
-
   def eval_expr({:case, expr, cls}, env) do
     case eval_expr(expr, env) do
-      :error -> :error
-      {:ok, str} -> eval_cls(cls, str, env)
+      :error ->
+        :error
+
+      {:ok, str} ->
+        eval_cls(cls, str, env)
     end
   end
-
   def eval_expr({:lambda, par, free, seq}, env) do
     case Env.closure(free, env) do
       :error ->
@@ -110,7 +126,7 @@ defmodule JohanEager do
             eval_seq(seq, env)
         end
       {:ok, _} ->
-	:error
+  :error
     end
   end
 
@@ -130,26 +146,36 @@ defmodule JohanEager do
   """
   @spec eval_match(pattern, str, env) :: {:ok, env} | :fail
 
-  def eval_match({:atm, _id}, _id, env) do {:ok, env} end
-
+  def eval_match({:atm, id}, id, env) do
+    {:ok, env}
+  end
   def eval_match({:var, id}, str, env) do
     case Env.lookup(id, env) do
-      nil -> {:ok, Env.add(id, str, env)}
-      {^id, ^str} -> {:ok, env} 
-      {_, _} -> :fail
+      nil ->
+        {:ok, Env.add(id, str, env)}
+
+      {^id, ^str} ->
+        {:ok, env} 
+
+      {_, _} ->
+        :fail
     end
   end
-
-  def eval_match(:ignore, _, env) do {:ok, env} end
-
+  def eval_match(:ignore, _, env) do
+    {:ok, env}
+  end
   def eval_match({:cons, hp, tp}, {hs, ts}, env) do
     case eval_match(hp, hs, env) do
-      :fail -> :fail
-      {:ok, env} -> eval_match(tp, ts, env) 
+      :fail ->
+        :fail
+
+      {:ok, env} ->
+        eval_match(tp, ts, env) 
     end
   end
-
-  def eval_match(_, _, _) do :fail end
+  def eval_match(_, _, _) do
+    :fail
+  end
 
   @doc """
   Create a new scope, remove all variables in the pattern
@@ -211,24 +237,13 @@ defmodule JohanEager do
 
   @spec extract_vars(pattern, [variable]) :: [variable]
 
-  def extract_vars({:atm, _}, variables) do variables end
-  def extract_vars(:ignore, variables) do variables end
-  def extract_vars({:var, var}, variables) do
-    [var | variables]
+  def extract_vars({:atm, _}, vars) do vars end
+  def extract_vars(:ignore, vars) do vars end
+  def extract_vars({:var, var}, vars) do
+    [var | vars]
   end
-  def extract_vars({:cons, head, tail}, variables) do
-    extract_vars(tail, extract_vars(head, variables))
-  end
-
-  def test() do
-    seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x},
-     {:atm, :b}}}, {:match, {:cons, :ignore, {:var, :z}}, {:var, :y}}, {:var, :z}]
-    eval_seq(seq, Env.new())
-  end
-
-  def test2() do
-    seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:atm, :b}}, {:cons, {:var, :x}, {:var, :y}}]
-    eval_seq(seq, Env.new())
+  def extract_vars({:cons, head, tail}, vars) do
+    extract_vars(tail, extract_vars(head, vars))
   end
 
 end
