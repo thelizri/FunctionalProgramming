@@ -208,7 +208,7 @@ defmodule Eager do
 		# x = :a
 		# f = fn(y) -> {x, y} end
 		# f.(:b)
-		# Elixir evaluates this to -> {:a, :b}
+		# Elixir evaluates this to -> {:a, [:b]}
 		seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :f},
 				{:lambda, [:y], [:x], [{:cons, {:var, :x}, {:var, :y}}]}},
 				{:apply, {:var, :f}, [{:atm, :b}]}]
@@ -225,6 +225,8 @@ defmodule Eager do
 	end
 
 	def test_named() do
+		# x = {:a, {:b, []}}
+		# y = {:c, {:d, []}}
 		seq = [{:match, {:var, :x},
 			{:cons, {:atm, :a}, {:cons, {:atm, :b}, {:atm, []}}}},
 			{:match, {:var, :y},

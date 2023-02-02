@@ -1,6 +1,12 @@
 defmodule Prgm do
 
   def append() do
+    # { [x, y],
+    #   case x do
+    #     [] -> y
+    #     {hd, tl} -> {hd, append(tl, y)}
+    #   end
+    # }
     {[:x, :y],
     [{:case, {:var, :x},
     [{:clause, {:atm, []}, [{:var, :y}]},
