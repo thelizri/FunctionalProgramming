@@ -24,9 +24,7 @@ defmodule Env do
   def closure(keyss, env) do
     List.foldr(keyss, [], fn(key, acc) ->
       case acc do
-        :error ->
-          :error
-
+        :error -> :error
         cls ->
           case lookup(key, env) do
             {key, value} ->
