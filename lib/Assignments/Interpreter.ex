@@ -15,7 +15,7 @@ defmodule Eager do
 		case {eval_expr(a, env), eval_expr(b, env)} do
 			{:error, _} -> :error
 			{_, :error} -> :error
-			{{:ok, str1},{:ok, str2}} -> {:ok, {str1, str2}}
+			{{:ok, str1},{:ok, str2}} -> {:ok, env}
 		end
 	end
 
@@ -25,6 +25,21 @@ defmodule Eager do
 	def eval_match(:ignore, _, env) do {:ok, env} end
 
 	def eval_match({:atm, id}, id, env) do {:ok, env} end
+
+	def eval_match({:atm, id}, {:atm, id}, env) do {:ok, env} end
+
+	def eval_match({:var, key}, {:atm, value}, env) do 
+		if is_atom(key) and is_atom(value) do
+			case Env.lookup(key, env) do
+				nil -> {:ok, Env.add(key, value, env)}
+				{_, ^value} -> {:ok, env}
+				{_, _} -> :fail
+			end
+		else
+			:error
+		end
+	end
+
 	def eval_match({:var, key}, value, env) do 
 		if is_atom(key) and is_atom(value) do
 			case Env.lookup(key, env) do
@@ -73,7 +88,7 @@ defmodule Eager do
 
 
 
-	def eval_scope(pattern, env) do
+	def eval_scope(pattern, env) do #Not sure what this is for. ???
 		Env.remove(extract_vars(pattern), env)
 	end
 
@@ -82,8 +97,24 @@ defmodule Eager do
 
 
 
-	def eval_seq([expr], env) do
-		eval_expr(expr, env)
+	#def eval_seq([expr], env) do
+	#	eval_expr(expr, env)
+	#end
+	def eval_seq([], env) do
+		{:ok, env}
+	end
+
+	def eval_seq([{:match, left, right} | seq], env) do
+
+		case eval_expr(right, env) do
+		  :error -> :error #So we're not matching to an unbound variable
+		  {:ok, str} -> 
+		  	case eval_match(left, right, env) do
+		  		:fail -> :error
+		  		:error -> :error
+		  		{:ok, newEnv} -> eval_seq(seq, newEnv)
+		  	end
+		end
 	end
 
 	#def eval_seq([{:match, ..., ...} | ...], ...) do end
@@ -92,4 +123,6 @@ defmodule Eager do
 #seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x}, {:atm, :b}}}, {:match, {:cons, :ignore, {:var, :z}}, {:var, :y}}, {:var, :z}]
 
 #[{:match, {:var, :x}, {:atm, :a}}]
+#[{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x}, {:atm, :b}}}]
+
 end
