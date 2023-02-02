@@ -201,4 +201,22 @@ defmodule Eager do
 				{:apply, {:var, :f}, [{:atm, :b}]}]
 		eval_seq(seq, Env.new())
 	end
+
+
+	################################################################################################################
+	# Evaluate named functions
+
+	def eval_expr({:fun id}, env) do
+		{par, seq} = apply(Prgm, id, [])
+		{:ok, {:closure, par, seq, Env.new()}}
+	end
+
+	################################################################################################################
+	# Evaluate 
+	
+	def eval(seq) do
+    	# a new environment is created
+    	eval_seq(seq, Env.new())
+  	end
+
 end
