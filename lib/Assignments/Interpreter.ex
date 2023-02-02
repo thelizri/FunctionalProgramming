@@ -103,8 +103,6 @@ defmodule Eager do
 	    eval_seq(seq, Env.new())
   	end
 
-
-
 	################################################################################################################
 	# Extract variables from a pattern
 	# Returns a list of variables
