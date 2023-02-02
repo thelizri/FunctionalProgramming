@@ -98,6 +98,8 @@ defmodule Eager do
 	end
 
 	def seq_test() do
+		# x = :a; y = {x, :b}; {_, z} = y; z
+		# Elixir evaluates above to -> :b
 	    seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x},
 	     {:atm, :b}}}, {:match, {:cons, :ignore, {:var, :z}}, {:var, :y}}, {:var, :z}]
 	    eval_seq(seq, Env.new())
@@ -148,7 +150,13 @@ defmodule Eager do
 	    end
   	end
 
+
   	def test_clauses() do
+  		# x = :a
+  		# case x do
+		# 	:b -> [:ops]
+		# 	:a -> [:yes]
+		# end
   		seq = [{:match, {:var, :x}, {:atm, :a}}, 
   		{:case, {:var, :x}, 
   		[{:clause, {:atm, :b}, [{:atm, :ops}]},
@@ -195,7 +203,12 @@ defmodule Eager do
 	    end
   	end
 
+
 	def test_lambda() do
+		# x = :a
+		# f = fn(y) -> {x, y} end
+		# f.(:b)
+		# Elixir evaluates this to -> {:a, :b}
 		seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :f},
 				{:lambda, [:y], [:x], [{:cons, {:var, :x}, {:var, :y}}]}},
 				{:apply, {:var, :f}, [{:atm, :b}]}]
