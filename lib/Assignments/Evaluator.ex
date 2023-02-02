@@ -17,13 +17,10 @@ defmodule Evaluation do
 	end
 
 	def eval(expression, environment) do
-		#:io.write(expression)
-		#IO.write("\n")
 		result=evaluate(expression, environment)
-		if result == expression do
-			result
-		else
-			eval(result, environment)
+		cond do
+			result == expression -> result
+			true -> eval(result, environment)
 		end
 	end
 
