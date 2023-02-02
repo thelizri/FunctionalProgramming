@@ -237,13 +237,13 @@ defmodule JohanEager do
 
   @spec extract_vars(pattern, [variable]) :: [variable]
 
-  def extract_vars({:atm, _}, vars) do vars end
-  def extract_vars(:ignore, vars) do vars end
-  def extract_vars({:var, var}, vars) do
-    [var | vars]
+  def extract_vars({:atm, _}, variables) do variables end
+  def extract_vars(:ignore, variables) do variables end
+  def extract_vars({:var, var}, variables) do
+    [var | variables]
   end
-  def extract_vars({:cons, head, tail}, vars) do
-    extract_vars(tail, extract_vars(head, vars))
+  def extract_vars({:cons, head, tail}, variables) do
+    extract_vars(tail, extract_vars(head, variables))
   end
 
 end
