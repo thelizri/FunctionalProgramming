@@ -206,14 +206,24 @@ defmodule Eager do
 	################################################################################################################
 	# Evaluate named functions
 
-	def eval_expr({:fun id}, env) do
+	def eval_expr({:fun, id}, env) do
 		{par, seq} = apply(Prgm, id, [])
 		{:ok, {:closure, par, seq, Env.new()}}
 	end
 
+	def test_named() do
+		seq = [{:match, {:var, :x},
+			{:cons, {:atm, :a}, {:cons, {:atm, :b}, {:atm, []}}}},
+			{:match, {:var, :y},
+			{:cons, {:atm, :c}, {:cons, {:atm, :d}, {:atm, []}}}},
+			{:apply, {:fun, :append}, [{:var, :x}, {:var, :y}]}
+			]
+		eval_seq(seq, Env.new())
+	end
+
 	################################################################################################################
 	# Evaluate 
-	
+
 	def eval(seq) do
     	# a new environment is created
     	eval_seq(seq, Env.new())
