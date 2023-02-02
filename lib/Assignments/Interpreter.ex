@@ -81,7 +81,27 @@ defmodule Eager do
 
 	################################################################################################################
 	# Takes a sequence
-	# Returns something
+	# Returns an evaluated expression
+	def eval_seq([exp], env) do
+		eval_expr(exp, env)
+	end
+
+	def eval_seq([{:match, pattern, expr} | rest], environment) do
+		case eval_expr(expr, environment) do
+			:error -> :error
+			{:ok, datastructure}-> newEnv = eval_scope(pattern, environment)
+				case eval_match(pattern, datastructure, newEnv) do
+					:fail -> :error
+					{:ok, env} -> eval_seq(rest, env)
+				end
+		end
+	end
+
+	def seq_test() do
+	    seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x},
+	     {:atm, :b}}}, {:match, {:cons, :ignore, {:var, :z}}, {:var, :y}}, {:var, :z}]
+	    eval_seq(seq, Env.new())
+  	end
 
 
 
