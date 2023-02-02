@@ -226,4 +226,9 @@ defmodule JohanEager do
     eval_seq(seq, Env.new())
   end
 
+  def test2() do
+    seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:atm, :b}}, {:cons, {:var, :x}, {:var, :y}}]
+    eval_seq(seq, Env.new())
+  end
+
 end
