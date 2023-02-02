@@ -43,11 +43,11 @@ defmodule JohanEager do
 
   def eval_seq([exp], env) do eval_expr(exp, env) end
 
-  def eval_seq([{:match, ptr, exp} | seq], env) do
+  def eval_seq([{:match, pattern, exp} | seq], env) do
     case eval_expr(exp, env) do
       :error -> :error
-      {:ok, str} -> #env = eval_scope(ptr, env)
-        case eval_match(ptr, str, env) do
+      {:ok, str} -> env = eval_scope(pattern, env)
+        case eval_match(pattern, str, env) do
           :fail -> :error
           {:ok, env} -> eval_seq(seq, env)
         end
@@ -73,10 +73,8 @@ defmodule JohanEager do
       :error -> :error
       {:ok, str1} ->
         case eval_expr(right, env) do
-          :error ->
-            :error
-          {:ok, str2} ->
-            {:ok, {str1 , str2}}   
+          :error -> :error
+          {:ok, str2} -> {:ok, {str1 , str2}}   
         end
     end
   end
