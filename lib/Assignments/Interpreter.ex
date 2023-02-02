@@ -79,4 +79,28 @@ defmodule Eager do
 		IO.write("\n")
 	end
 
+	################################################################################################################
+	# Takes a sequence
+	# Returns something
+
+
+
+	################################################################################################################
+	# Extract variables from a pattern
+	# Returns a list of variables
+
+	def extract_vars(pattern) do
+    	extract_vars(pattern, [])
+  	end
+
+    def extract_vars({:atm, _}, variables) do variables end
+    def extract_vars(:ignore, variables) do variables end
+    def extract_vars({:var, var}, variables) do
+    	[var | variables]
+    end
+    def extract_vars({:cons, head, tail}, variables) do
+   		extract_vars(tail, extract_vars(head, variables))
+    end
+
+
 end
