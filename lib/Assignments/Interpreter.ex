@@ -15,9 +15,12 @@ defmodule Eager do
 		case {eval_expr(a, env), eval_expr(b, env)} do
 			{:error, _} -> :error
 			{_, :error} -> :error
-			{{:ok, str1},{:ok, str2}} -> {:ok, str1, str2}
+			{{:ok, str1},{:ok, str2}} -> {:ok, {str1, str2}}
 		end
 	end
+
+
+
 
 	def eval_match(:ignore, _, env) do {:ok, env} end
 
@@ -42,31 +45,51 @@ defmodule Eager do
 
 	def eval_match(_, _, _) do :fail end
 
-	def eval_scope(..., ...) do 
 
+
+
+
+	def extract_vars(pattern) do
+		extract_vars(pattern, [])
 	end
 
-	def eval_seq([exp], env) do 
-
-	end
-
-	def eval_seq([{:match, ..., ...} | ...], ...) do
-
-	end
-
-	def extract_vars(seq) do
-		extract_vars(seq, [])
-	end
-
-	defp extract_vars([], result) do
+	def extract_vars({:atm, _}, result) do
 		result
 	end
 
-	defp extract_vars([head|rest], result) do
-		result = case head do
-			{:var, x} -> ^result ++ [{:var, x}]
-			_ -> result
-		end
-		extract_vars(rest, result)
+	def extract_vars(:ignore, result) do
+		result
 	end
+
+	def extract_vars({:var, x}, result) do
+		[x | result]
+	end
+
+	def extract_vars({:cons, head, tail}, vars) do
+    	extract_vars(tail, extract_vars(head, vars))
+  	end
+
+
+
+
+
+	def eval_scope(pattern, env) do
+		Env.remove(extract_vars(pattern), env)
+	end
+
+
+
+
+
+
+	def eval_seq([expr], env) do
+		eval_expr(expr, env)
+	end
+
+	#def eval_seq([{:match, ..., ...} | ...], ...) do end
+
+  
+#seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :y}, {:cons, {:var, :x}, {:atm, :b}}}, {:match, {:cons, :ignore, {:var, :z}}, {:var, :y}}, {:var, :z}]
+
+#[{:match, {:var, :x}, {:atm, :a}}]
 end
