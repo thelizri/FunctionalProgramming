@@ -156,4 +156,31 @@ defmodule Eager do
 		eval_seq(seq, Env.new())
 	end
 
+	################################################################################################################
+	# Evaluate lambda expressions
+	# {:lambda, parameters, free, sequence}
+	# {:closure, parameters, sequence, environment}
+
+	def eval_expr({:lambda, parameters, free, sequence}, environment) do
+		case Env.closure(free, environment) do
+			:error -> :error
+			closure -> {:ok, {:closure, parameters, sequence, closure}}
+		end
+	end
+
+	def eval_expr({:apply, expression, arguments}, environment) do
+		case eval_expr(expression, environment) do
+			:error -> :error
+			{:ok, {:closure, parameters, sequence, closure}} -> 
+				case eval_args(arguments, environment) do
+					:error -> :error
+					{:ok, strs} -> 
+						env = Env.args(parameters, strs, closure)
+						eval_seq(sequence, env)
+				end
+			{:ok, _} -> :error
+		end
+	end
+
+
 end
