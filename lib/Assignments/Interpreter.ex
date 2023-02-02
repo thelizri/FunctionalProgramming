@@ -124,5 +124,36 @@ defmodule Eager do
    		extract_vars(tail, extract_vars(head, variables))
     end
 
+    ################################################################################################################
+	# Evaluate cases
+	# 1. First evaluate expression to structure.
+	# 2. Try to match pattern in clause to structure.
+	# 3. Move on if it doesn't match. If match, execute sequence clause contains.
+
+	def eval_expr({:case, expressive, clauses}, env) do
+	    case eval_expr(expressive, env) do
+	      :error -> :error
+	      {:ok, str} -> eval_cls(clauses, str, env)
+	    end
+  	end
+
+  	def eval_cls([], _, _, _) do
+		:error
+	end
+
+	def eval_cls([{:clause, pattern, sequence} | clauses], structure, environment) do
+	    case eval_match(pattern, structure, eval_scope(pattern, environment)) do
+	    	:fail -> eval_cls(clauses, structure, environment)
+	    	{:ok, newEnvironment} -> eval_seq(sequence, newEnvironment)
+	    end
+  	end
+
+  	def test_clauses() do
+  		seq = [{:match, {:var, :x}, {:atm, :a}}, 
+  		{:case, {:var, :x}, 
+  		[{:clause, {:atm, :b}, [{:atm, :ops}]},
+		{:clause, {:atm, :a}, [{:atm, :yes}]}]}]
+		eval_seq(seq, Env.new())
+	end
 
 end
