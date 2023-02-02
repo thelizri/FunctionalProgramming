@@ -182,5 +182,23 @@ defmodule Eager do
 		end
 	end
 
+	def eval_args(args, env) do
+    	eval_args(args, env, [])
+  	end
+  
+  	def eval_args([], _, strs) do {:ok, Enum.reverse(strs)} end
 
+  	def eval_args([expr | exprs], env, strs) do
+	    case eval_expr(expr, env) do
+	    	:error -> :error
+	    	{:ok, str} -> eval_args(exprs, env, [str|strs]) 
+	    end
+  	end
+
+	def test_lambda() do
+		seq = [{:match, {:var, :x}, {:atm, :a}}, {:match, {:var, :f},
+				{:lambda, [:y], [:x], [{:cons, {:var, :x}, {:var, :y}}]}},
+				{:apply, {:var, :f}, [{:atm, :b}]}]
+		eval_seq(seq, Env.new())
+	end
 end
