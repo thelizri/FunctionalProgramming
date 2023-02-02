@@ -89,6 +89,10 @@ defmodule Eager do
 	# Extract variables from a pattern
 	# Returns a list of variables
 
+	def eval_scope(pattern, environment) do
+		Env.remove(extract_vars(pattern), environment)
+	end
+
 	def extract_vars(pattern) do
     	extract_vars(pattern, [])
   	end
