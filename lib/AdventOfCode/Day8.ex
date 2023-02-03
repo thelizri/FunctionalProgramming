@@ -18,4 +18,8 @@ defmodule Day8 do
 		row*size+column
 	end
 
+	def traverse_matrix_spiral_order() do
+		
+	end
+
 end
