@@ -5,7 +5,12 @@ defmodule Day8 do
 		content = String.split(input, "\r\n")
 		for row <- content do
 			Enum.map(String.split(row, "", trim: true), fn(x) -> String.to_integer(x) end)
-		end
+		end |> execute_program
+	end
+
+	def execute_program(matrix) do
+		size = length(matrix)
+		List.flatten(matrix) |> List.to_tuple()
 	end
 
 end
