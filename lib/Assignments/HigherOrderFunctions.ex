@@ -48,8 +48,31 @@ defmodule HigherOrder do
 	########################################################################################
 	# With higher order functions
 
+	# This is the same as the Enum.map(list, function)
 	def apply_to_all(list, function) do
 		for item <- list do function.(item) end
 	end
 
+	def fold_right([], base, function) do base end
+
+	def fold_right(list, base, function) do
+		for item <- list do function.(item, base) end
+	end
+
+
+	########################################################################################
+	# The important functions
+	# Enum.map(list, function)                           -----> For executing a function on all elements
+	# Enum.reduce(list, accumulator, function)           -----> For accumulating a result based on the function and list. For example the sum of the list.
+	# Enum.filter(list, function)						 -----> For filtering out items in the list that meet a certain condition
+
+
+	# Enum.filter([1, 2, 3], fn x -> rem(x, 2) == 0 end)
+	# [2]
+
+	# Enum.reduce([1, 2, 3], 0, fn x, acc -> x + acc end)
+	# 6
+
+	# Enum.map([1, 2, 3], fn x -> x * 2 end)
+	# [2, 4, 6]
 end
