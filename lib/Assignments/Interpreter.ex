@@ -27,11 +27,11 @@ defmodule Eager do
 	def eval_test() do
 		:io.write(eval_expr({:atm, :a}, Env.new()))
 		IO.write("\n")
-		:io.write(eval_expr({:var, :x}, %{x: :a}))
+		:io.write(eval_expr({:var, :x}, [x: :a]))
 		IO.write("\n")
 		:io.write(eval_expr({:var, :x}, Env.new()))
 		IO.write("\n")
-		:io.write(eval_expr({:cons, {:var, :x}, {:atm, :b}}, %{x: :a}))
+		:io.write(eval_expr({:cons, {:var, :x}, {:atm, :b}}, [x: :a]))
 		IO.write("\n")
 	end
 
@@ -71,9 +71,9 @@ defmodule Eager do
 		IO.write("\n")
 		:io.write(eval_match({:var, :x}, :a, Env.new()))
 		IO.write("\n")
-		:io.write(eval_match({:var, :x}, :a, %{x: :a}))
+		:io.write(eval_match({:var, :x}, :a, [x: :a]))
 		IO.write("\n")
-		:io.write(eval_match({:var, :x}, :a, %{x: :b}))
+		:io.write(eval_match({:var, :x}, :a, [x: :b]))
 		IO.write("\n")
 		:io.write(eval_match({:cons, {:var, :x}, {:var, :x}}, {:a, :b}, Env.new()))
 		IO.write("\n")
