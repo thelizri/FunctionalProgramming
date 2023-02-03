@@ -12,6 +12,16 @@ defmodule HigherOrder do
 		end
 	end
 
+	def animal(animals) do
+		for animal <- animals do
+			case animal do
+				:dog -> :fido
+				_ -> animal
+			end
+		end
+	end
+
+
 	########################################################################################
 	# Without using list comprehensions
 
@@ -33,6 +43,13 @@ defmodule HigherOrder do
 
 	def five2([head|rest], accumulator) do
 		five2(rest, [5+head|accumulator])
+	end
+
+	########################################################################################
+	# With higher order functions
+
+	def apply_to_all(list, function) do
+		for item <- list do function.(item) end
 	end
 
 end
