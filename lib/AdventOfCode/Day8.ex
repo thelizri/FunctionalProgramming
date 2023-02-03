@@ -10,7 +10,12 @@ defmodule Day8 do
 
 	def execute_program(matrix) do
 		size = length(matrix)
-		List.flatten(matrix) |> List.to_tuple()
+		tuple = List.flatten(matrix) |> List.to_tuple()
+		elem(tuple, get_index(size-1,size-1, size))
+	end
+
+	def get_index(row, column, size) do
+		row*size+column
 	end
 
 end
