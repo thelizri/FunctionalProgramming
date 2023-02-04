@@ -65,6 +65,56 @@ defmodule Day9 do
 		move(direction, steps-1, set, head, tail)
 	end
 
+	#######################################################################################################################################
+	# Part 2
+
+	def getUpdateTailList(tail, [], list) do
+		{tail, list}
+	end
+
+	def getUpdateTailList(head, [tail|rest], result) do
+		tail = getNewTailPosition(head, tail)
+		new = result ++ [tail]
+		getUpdateTailList(tail, rest, new)
+	end
 	
+	def create_list() do
+		for n <- 1..9 do {0,0} end
+	end
+
+	def move_part_2(_, 0, set, head, tailList) do
+		{set, head, tailList}
+	end
+
+	def move_part_2(direction, steps, set, head={headX, headY}, tailList) do
+		head = case direction do
+			"R" -> {headX+1, headY}
+			"U" -> {headX, headY+1}
+			"D" -> {headX, headY-1}
+			"L" -> {headX-1, headY}
+		end
+		{tail, tailList} = getUpdateTailList(head, tailList, [])
+		set = add(set, tail)
+		move_part_2(direction, steps-1, set, head, tailList)
+	end
+
+	def execute_program_part_2([], set, head, tailList) do
+		size(set)
+	end
+
+	def execute_program_part_2([row={direction, steps}|rest], set, head, tailList) do
+		{set, head, tailList} = move_part_2(direction, steps, set, head, tailList)
+		execute_program_part_2(rest, set, head, tailList)
+	end
+
+	def read_part_2() do
+		{:ok, input} = File.read("lib/AdventOfCode/Day9.txt")
+		content = String.split(input, "\r\n")
+		instructions = for row <- content do
+			[direction, steps] = String.split(row, " ", trim: true)
+			{direction, String.to_integer(steps)}
+		end
+		execute_program_part_2(instructions, add(MapSet.new(), {0,0}), {0,0}, create_list())
+	end
 
 end
