@@ -5,10 +5,9 @@ defmodule Day16 do
 
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
-		list = String.split(content, "\r\n") |>
-		parse_row([])
-		create_matrix(list)
-		create_unvisited_nodes_list(list)
+		list = String.split(content, "\r\n") |> parse_row([])
+		matrix = create_matrix(list)
+		unvisited = create_unvisited_nodes_list(list)
 	end
 
 	def parse_row([], results) do
@@ -20,7 +19,7 @@ defmodule Day16 do
 		|> Enum.map(fn(x) -> [y] = x; y = String.trim(y); String.at(y, 0) end)
 		|> List.flatten
 		[node|links] = for node <- nodes do
-			String.trim(node)
+			String.trim(node) |> String.to_atom()
 		end
 		number = Regex.scan(~r/\d+/, head) |> List.flatten |> Enum.at(0) |> String.to_integer
 		parse_row(rest, [{node, number, links}|results])
@@ -39,6 +38,12 @@ defmodule Day16 do
 			rate > 0 -> create_unvisited_nodes_list(rest, [letter|result])
 			true -> create_unvisited_nodes_list(rest, result)
 		end
+	end
+
+	def create_hash_map() do
+		string = String.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", trim: true)
+		map = Map.new()
+		Enum.reduce(string, map, fn(x, acc) -> Map.put(acc, String.to_atom(x), :binary.first(x)-65) end)
 	end
 
 
