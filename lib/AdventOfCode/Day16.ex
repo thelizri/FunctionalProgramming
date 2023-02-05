@@ -37,4 +37,9 @@ defmodule Day16 do
 	#				dist[i][j] <- dist[i][k] + dist[k][j]
 	#			end if
 
+	# How to solve day 16
+	# Score of a node = valve_rate*(time_left-time_to_get_there)
+	# Pick node with highest score. Move to it. Open valve.
+	# Repeat.
+
 end
