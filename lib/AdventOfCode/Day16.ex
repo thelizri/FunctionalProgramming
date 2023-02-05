@@ -5,8 +5,10 @@ defmodule Day16 do
 
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
-		String.split(content, "\r\n") |>
-		parse_row([]) #|> create_matrix()
+		list = String.split(content, "\r\n") |>
+		parse_row([])
+		create_matrix(list)
+		create_unvisited_nodes_list(list)
 	end
 
 	def parse_row([], results) do
@@ -28,6 +30,18 @@ defmodule Day16 do
 		size = length(list)
 		Matrix.new(size, size, :infinity)
 	end
+
+	def create_unvisited_nodes_list(list, result \\ [])
+	def create_unvisited_nodes_list([], result) do result end
+	def create_unvisited_nodes_list([head|rest], result) do
+		{letter, rate, _} = head
+		cond do
+			rate > 0 -> create_unvisited_nodes_list(rest, [letter|result])
+			true -> create_unvisited_nodes_list(rest, result)
+		end
+	end
+
+
 
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
