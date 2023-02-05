@@ -6,7 +6,7 @@ defmodule Day16 do
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
 		String.split(content, "\r\n") |>
-		parse_row([]) |> create_matrix()
+		parse_row([]) #|> create_matrix()
 	end
 
 	def parse_row([], results) do
@@ -14,7 +14,8 @@ defmodule Day16 do
 	end
 
 	def parse_row([head|rest], results) do
-		nodes = Regex.scan(~r/\s*[A-Z]{2}\s*/, head)
+		nodes = Regex.scan(~r/\s*[A-Z]{2}\s*/, head) 
+		|> Enum.map(fn(x) -> [y] = x; y = String.trim(y); String.at(y, 0) end)
 		|> List.flatten
 		[node|links] = for node <- nodes do
 			String.trim(node)
@@ -43,6 +44,7 @@ defmodule Day16 do
 	#			end if
 
 	# How to solve day 16
+	# Disregard all nodes with valve rates equal to zero
 	# Score of a node = valve_rate*(time_left-time_to_get_there)
 	# Pick node with highest score. Move to it. Open valve.
 	# Repeat.
