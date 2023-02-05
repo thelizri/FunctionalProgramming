@@ -6,21 +6,26 @@ defmodule Day16 do
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
 		String.split(content, "\r\n") |>
-		evaluate_row([])
+		parse_row([]) |> create_matrix()
 	end
 
-	def evaluate_row([], results) do
+	def parse_row([], results) do
 		Enum.reverse(results)
 	end
 
-	def evaluate_row([head|rest], results) do
+	def parse_row([head|rest], results) do
 		nodes = Regex.scan(~r/\s*[A-Z]{2}\s*/, head)
 		|> List.flatten
 		[node|links] = for node <- nodes do
 			String.trim(node)
 		end
 		number = Regex.scan(~r/\d+/, head) |> List.flatten |> Enum.at(0) |> String.to_integer
-		evaluate_row(rest, [{node, number, links}|results])
+		parse_row(rest, [{node, number, links}|results])
+	end
+
+	def create_matrix(list) do
+		size = length(list)
+		Matrix.new(size, size, :infinity)
 	end
 
 	# Floyd-Warshall Algorithm
