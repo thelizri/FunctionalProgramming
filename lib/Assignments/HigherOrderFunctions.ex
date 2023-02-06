@@ -33,6 +33,22 @@ defmodule HigherOrder do
 	end
 
 	########################################################################################
+	# Map
+	def apply_to_all([], function) do [] end
+	def apply_to_all([head|rest], function) do
+		[function.(head)|apply_to_all(rest, function)]
+	end
+
+	########################################################################################
+	# Reduce
+	def sum([sum]) do sum end
+	def sum([head|rest]) do head + sum(rest) end
+
+
+	########################################################################################
+	# Filter
+
+	########################################################################################
 	# The Important Functions
 	# Enum.map(list, function)                           -----> For executing a function on all elements
 	# Enum.reduce(list, accumulator, function)           -----> For accumulating a result based on the function and list. For example the sum of the list.
