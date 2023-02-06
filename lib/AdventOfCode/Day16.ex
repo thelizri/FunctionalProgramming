@@ -8,6 +8,8 @@ defmodule Day16 do
 		list = String.split(content, "\r\n") |> parse_row([])
 		matrix = create_matrix(list)
 		unvisited = create_unvisited_nodes_list(list)
+		map = create_hash_map()
+		execute_program(list, unvisited, map, matrix)
 	end
 
 	def parse_row([], results) do
@@ -46,6 +48,22 @@ defmodule Day16 do
 		Enum.reduce(string, map, fn(x, acc) -> Map.put(acc, String.to_atom(x), :binary.first(x)-65) end)
 	end
 
+	######################################################################################################
+	# Done with parsing data. Time to implement algorithm
+
+	def execute_program(list, unvisited, map, matrix) do
+		matrix = step1(matrix, length(list))
+	end
+
+	#While i < vertices - 1
+	def step1(matrix, vertices, i \\ 0) do
+		matrix = Matrix.set(matrix, i, i, 0)
+		cond do i < vertices - 1 -> step1(matrix, vertices, i+1); true -> matrix; end
+	end
+
+	def step2(matrix, list, map) do
+
+	end
 
 
 	# Floyd-Warshall Algorithm
