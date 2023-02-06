@@ -87,6 +87,25 @@ defmodule Day16 do
 		loop_through_weights(Matrix.set(matrix, row, col, 1), rest)
 	end
 
+
+	#For step 3. Nested loop
+	#While k < length-1, i < length-1, j < length-1 
+	def loop(k, i, j, length, result, :k) do
+		result = loop(k, i, j, length, result, :i)
+		cond do k < length-1 -> loop(k+1, i, j, length, result, :k); true -> result; end
+	end
+
+	def loop(k, i, j, length, result, :i) do
+		result = loop(k, i, j, length, result, :j)
+		cond do i < length-1 -> loop(k, i+1, j, length, result, :i); true -> result; end
+	end
+
+	def loop(k, i, j, length, result, :j) do
+		:io.write({k,i,j})
+		IO.puts("  <- Value")
+		cond do j < length-1 -> loop(k, i, j+1, length, result, :j); true -> result; end
+	end
+
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
 	# let dist = V * V array of minimum distances

@@ -7,23 +7,25 @@ defmodule Floyd do
 	end
 
 	def test2() do
-		loopk(3, 2, 2, nil, nil)
+		loop( 0, 0, 0, 2, nil, :k)
 	end
 
-	def loopk(k, i, j, args, result) do
-		result = loopi(k, i, j, args, result)
-		cond do k > 1 -> loopk(k-1, i, j, args, result); true -> result; end
+	#For step 3. Nested loop
+	#While k < length-1, i < length-1, j < length-1 
+	def loop(k, i, j, length, result, :k) do
+		result = loop(k, i, j, length, result, :i)
+		cond do k < length-1 -> loop(k+1, i, j, length, result, :k); true -> result; end
 	end
 
-	def loopi(k, i, j, args, result) do
-		result = loopj(k, i, j, args, result)
-		cond do i > 1 -> loopi(k, i-1, j, args, result); true -> result; end
+	def loop(k, i, j, length, result, :i) do
+		result = loop(k, i, j, length, result, :j)
+		cond do i < length-1 -> loop(k, i+1, j, length, result, :i); true -> result; end
 	end
 
-	def loopj(k, i, j, args, result) do
+	def loop(k, i, j, length, result, :j) do
 		:io.write({k,i,j})
 		IO.puts("  <- Value")
-		cond do j > 1 -> loopj(k, i, j-1, args, result); true -> result; end
+		cond do j < length-1 -> loop(k, i, j+1, length, result, :j); true -> result; end
 	end
 
 	# Floyd-Warshall Algorithm
