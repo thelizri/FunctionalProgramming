@@ -1,64 +1,25 @@
 defmodule HigherOrder do
 
-	def double(numbers) do
-		for num <- numbers do
-			2*num
+	def double(numbers, result \\ [])
+	def double([], result) do result end
+	def double([number|rest], result) do
+		result = result ++ [number*2]; double(rest, result)
+	end
+
+	def five(numbers, result \\ [])
+	def five([], result) do result end
+	def five([number|rest], result) do
+		result = result ++ [number+5]; five(rest, result)
+	end
+
+	def animal(animals, result \\ [])
+	def animal([], result) do result end
+	def animal([animal|rest], result) do
+		case animal do
+			:dog -> animal(rest, result++[:fido])
+			_ -> animal(rest, result++[animal])
 		end
 	end
-
-	def five(numbers) do
-		for num <- numbers do
-			num + 5
-		end
-	end
-
-	def animal(animals) do
-		for animal <- animals do
-			case animal do
-				:dog -> :fido
-				_ -> animal
-			end
-		end
-	end
-
-
-	########################################################################################
-	# Without using list comprehensions
-
-	def double2(numbers) do
-		Enum.reverse(double2(numbers, []))
-	end
-
-	def double2([], accumulator) do accumulator end
-
-	def double2([head|rest], accumulator) do
-		double2(rest, [2*head|accumulator])
-	end
-
-	def five2(numbers) do
-		Enum.reverse(five2(numbers, []))
-	end
-
-	def five2([], accumulator) do accumulator end
-
-	def five2([head|rest], accumulator) do
-		five2(rest, [5+head|accumulator])
-	end
-
-	########################################################################################
-	# With higher order functions
-
-	# This is the same as the Enum.map(list, function)
-	def apply_to_all(list, function) do
-		for item <- list do function.(item) end
-	end
-
-	def fold_right([], base, function) do base end
-
-	def fold_right(list, base, function) do
-		for item <- list do function.(item, base) end
-	end
-
 
 	########################################################################################
 	# The important functions
