@@ -54,6 +54,7 @@ defmodule Day16 do
 	def execute_program(list, unvisited, map, matrix) do
 		matrix = step1(matrix, length(list))
 		matrix = step2(matrix, list, map)
+		matrix = step3(matrix, length(list))
 	end
 
 	#While i < vertices - 1
@@ -87,24 +88,40 @@ defmodule Day16 do
 		loop_through_weights(Matrix.set(matrix, row, col, 1), rest)
 	end
 
+	def step3(matrix, vertices) do
+		loop( 0, 0, 0, vertices, matrix, :k)
+	end
+
 
 	#For step 3. Nested loop
 	#While k < length-1, i < length-1, j < length-1 
-	def loop(k, i, j, length, result, :k) do
-		result = loop(k, i, j, length, result, :i)
-		cond do k < length-1 -> loop(k+1, i, j, length, result, :k); true -> result; end
+	def loop(k, i, j, length, matrix, :k) do
+		matrix = loop(k, i, j, length, matrix, :i)
+		cond do k < length-1 -> loop(k+1, i, j, length, matrix, :k); true -> matrix; end
 	end
 
-	def loop(k, i, j, length, result, :i) do
-		result = loop(k, i, j, length, result, :j)
-		cond do i < length-1 -> loop(k, i+1, j, length, result, :i); true -> result; end
+	def loop(k, i, j, length, matrix, :i) do
+		matrix = loop(k, i, j, length, matrix, :j)
+		cond do i < length-1 -> loop(k, i+1, j, length, matrix, :i); true -> matrix; end
 	end
 
-	def loop(k, i, j, length, result, :j) do
-		:io.write({k,i,j})
-		IO.puts("  <- Value")
-		cond do j < length-1 -> loop(k, i, j+1, length, result, :j); true -> result; end
+	def loop(k, i, j, length, matrix, :j) do
+		a = Matrix.elem(matrix, i, j)
+		b = Matrix.elem(matrix, i, k)
+		c = Matrix.elem(matrix, k, j)
+		matrix = case {a,b,c} do
+			{:infinity, :infinity, :infinity} -> matrix
+			{:infinity, :infinity, _} -> matrix
+			{:infinity, _, :infinity} -> matrix
+			{:infinity, _, _} -> Matrix.set(matrix, i, j, b+c)
+			{_, :infinity, _} -> matrix
+			{_, _, :infinity} -> matrix
+			{_, _, _} -> cond do a > b + c -> Matrix.set(matrix, i, j, b+c); true -> matrix; end
+		end
+		cond do j < length-1 -> loop(k, i, j+1, length, matrix, :j); true -> matrix; end
 	end
+
+
 
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
@@ -119,6 +136,9 @@ defmodule Day16 do
 	# 			if dist[i][j] > dist[i][k] + dist[k][j]
 	#				dist[i][j] <- dist[i][k] + dist[k][j]
 	#			end if
+
+	######################################################################################################
+	# Finished implementing algorithm. Time to solve the puzzle
 
 	# How to solve day 16
 	# Disregard all nodes with valve rates equal to zero
