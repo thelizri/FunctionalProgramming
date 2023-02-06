@@ -8,7 +8,7 @@ defmodule Day16 do
 		list = String.split(content, "\r\n") |> parse_row([])
 		matrix = create_matrix(list)
 		unvisited = create_unvisited_nodes_list(list)
-		map = create_hash_map()
+		map = create_hash_map(list, Map.new(), 0)
 		execute_program(list, unvisited, map, matrix)
 	end
 
@@ -18,10 +18,10 @@ defmodule Day16 do
 
 	def parse_row([head|rest], results) do
 		nodes = Regex.scan(~r/\s*[A-Z]{2}\s*/, head) 
-		|> Enum.map(fn(x) -> [y] = x; y = String.trim(y); String.at(y, 0) end)
+		|> Enum.map(fn(x) -> [y] = x; y = String.trim(y) end)
 		|> List.flatten
 		[node|links] = for node <- nodes do
-			String.trim(node) |> String.to_atom()
+			String.trim(node)
 		end
 		number = Regex.scan(~r/\d+/, head) |> List.flatten |> Enum.at(0) |> String.to_integer
 		parse_row(rest, [{node, number, links}|results])
@@ -42,10 +42,11 @@ defmodule Day16 do
 		end
 	end
 
-	def create_hash_map() do
-		string = String.split("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "", trim: true)
-		map = Map.new()
-		Enum.reduce(string, map, fn(x, acc) -> Map.put(acc, String.to_atom(x), :binary.first(x)-65) end)
+	def create_hash_map([], map, _) do map end
+	def create_hash_map([head|rest], map, acc) do
+		{node, _, _} = head
+		map = Map.put(map, node, acc)
+		create_hash_map(rest, map, acc+1)
 	end
 
 	######################################################################################################
@@ -142,17 +143,7 @@ defmodule Day16 do
 	# Finished implementing algorithm. Time to solve the puzzle
 
 	def execute_final(list, unvisited, map, matrix) do
-		#get_list_of_scores(:A, unvisited, [], map, matrix, 30)
-		#|> get_max_score_from_list(30, nil)
-		#unvisited = remove_from_unvisited(unvisited, :D)
-		#get_list_of_scores(:D, unvisited, [], map, matrix, 28)
-		#unvisited = remove_from_unvisited(unvisited, :B)
-		#get_list_of_scores(:B, unvisited, [], map, matrix, 25)
-		#unvisited = remove_from_unvisited(unvisited, :J)
-		#get_list_of_scores(:J, unvisited, [], map, matrix, 21)
-		#unvisited = remove_from_unvisited(unvisited, :H)
-		#get_list_of_scores(:H, unvisited, [], map, matrix, 13)
-		do_a_step(list, unvisited, map, matrix, 30, :A, 0)
+		do_a_step(list, unvisited, map, matrix, 30, "AA", 0)
 	end
 
 	def get_list_of_scores(starting_node, [], result, map, matrix, time) do
@@ -162,7 +153,10 @@ defmodule Day16 do
 	def get_list_of_scores(starting_node, [unvisited|rest], result, map, matrix, time) do
 		{to, rate} = unvisited
 		{score, total_time, mod} = calculate_score_of_node(starting_node, to, rate, map, matrix, time)
-		get_list_of_scores(starting_node, rest, [{to, score, total_time, mod}|result], map, matrix, time)
+		case total_time do
+			:infinity -> get_list_of_scores(starting_node, rest, result, map, matrix, time)
+			_ -> get_list_of_scores(starting_node, rest, [{to, score, total_time, mod}|result], map, matrix, time)
+		end
 	end
 
 	def get_max_score_from_list([], time_left, result) do result end
@@ -202,17 +196,22 @@ defmodule Day16 do
 	def do_a_step(list, [], map, matrix, time, current_node, result) do result end
 
 	def do_a_step(list, unvisited, map, matrix, time, current_node, result) do
-		{node, score, time_taken,_} = get_list_of_scores(current_node, unvisited, [], map, matrix, time)
+		thelist = get_list_of_scores(current_node, unvisited, [], map, matrix, time)
 		|> get_max_score_from_list(time, nil)
-		:io.write({node, score, time_taken})
-		IO.puts("    <- Step")
-		unvisited = remove_from_unvisited(unvisited, node)
-		result = result + score
-		current_node = node
-		time = time - time_taken
-		cond do 
-			time > 0 -> do_a_step(list, unvisited, map, matrix, time, current_node, result)
-			true -> result
+		case thelist do
+			nil -> result
+			_ -> 
+				{node, score, time_taken,_} = thelist
+				:io.write({node, score, time_taken})
+				IO.puts("    <- Step")
+				unvisited = remove_from_unvisited(unvisited, node)
+				result = result + score
+				current_node = node
+				time = time - time_taken
+				cond do 
+					time > 0 -> do_a_step(list, unvisited, map, matrix, time, current_node, result)
+					true -> result
+				end
 		end
 	end
 
