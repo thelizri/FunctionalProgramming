@@ -44,9 +44,14 @@ defmodule HigherOrder do
 	def sum([sum]) do sum end
 	def sum([head|rest]) do head + sum(rest) end
 
+	def fold_right([], acc, _) do acc end
+	def fold_right([head|rest], acc, function) do
+		function.(head, fold_right(rest, acc, function))
+	end
 
 	########################################################################################
 	# Filter
+
 
 	########################################################################################
 	# The Important Functions
