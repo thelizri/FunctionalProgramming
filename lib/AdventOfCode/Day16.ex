@@ -142,15 +142,17 @@ defmodule Day16 do
 	# Finished implementing algorithm. Time to solve the puzzle
 
 	def execute_final(list, unvisited, map, matrix) do
-		get_list_of_scores(:A, unvisited, [], map, matrix, 30)
-		unvisited = remove_from_unvisited(unvisited, :D)
-		get_list_of_scores(:D, unvisited, [], map, matrix, 28)
-		unvisited = remove_from_unvisited(unvisited, :B)
-		get_list_of_scores(:B, unvisited, [], map, matrix, 25)
-		unvisited = remove_from_unvisited(unvisited, :J)
-		get_list_of_scores(:J, unvisited, [], map, matrix, 21)
-		unvisited = remove_from_unvisited(unvisited, :H)
-		get_list_of_scores(:H, unvisited, [], map, matrix, 13)
+		#get_list_of_scores(:A, unvisited, [], map, matrix, 30)
+		#|> get_max_score_from_list(30, nil)
+		#unvisited = remove_from_unvisited(unvisited, :D)
+		#get_list_of_scores(:D, unvisited, [], map, matrix, 28)
+		#unvisited = remove_from_unvisited(unvisited, :B)
+		#get_list_of_scores(:B, unvisited, [], map, matrix, 25)
+		#unvisited = remove_from_unvisited(unvisited, :J)
+		#get_list_of_scores(:J, unvisited, [], map, matrix, 21)
+		#unvisited = remove_from_unvisited(unvisited, :H)
+		#get_list_of_scores(:H, unvisited, [], map, matrix, 13)
+		do_a_step(list, unvisited, map, matrix, 30, :A, 0)
 	end
 
 	def get_list_of_scores(starting_node, [], result, map, matrix, time) do
@@ -161,6 +163,26 @@ defmodule Day16 do
 		{to, rate} = unvisited
 		{score, total_time, mod} = calculate_score_of_node(starting_node, to, rate, map, matrix, time)
 		get_list_of_scores(starting_node, rest, [{to, score, total_time, mod}|result], map, matrix, time)
+	end
+
+	def get_max_score_from_list([], time_left, result) do result end
+
+	def get_max_score_from_list([head|rest], time_left, result) do
+		{to, score, total_time, mod} = head
+		case result do
+			nil -> 
+				cond do 
+					total_time <= time_left -> get_max_score_from_list(rest, time_left, head) #Can cause error
+					true -> get_max_score_from_list(rest, time_left, result)
+				end
+			_ -> 
+				{_, _, _, modMax} = result
+				cond do
+					total_time > time_left -> get_max_score_from_list(rest, time_left, result)
+					mod > modMax -> get_max_score_from_list(rest, time_left, head)
+					true -> get_max_score_from_list(rest, time_left, result)
+				end
+		end
 	end
 
 	def calculate_score_of_node(from, to, flowrate, map, matrix, time) do
@@ -175,6 +197,23 @@ defmodule Day16 do
 
 	def remove_from_unvisited(unvisited, remove) do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
+	end
+
+	def do_a_step(list, [], map, matrix, time, current_node, result) do result end
+
+	def do_a_step(list, unvisited, map, matrix, time, current_node, result) do
+		{node, score, time_taken,_} = get_list_of_scores(current_node, unvisited, [], map, matrix, time)
+		|> get_max_score_from_list(time, nil)
+		:io.write({node, score, time_taken})
+		IO.puts("    <- Step")
+		unvisited = remove_from_unvisited(unvisited, node)
+		result = result + score
+		current_node = node
+		time = time - time_taken
+		cond do 
+			time > 0 -> do_a_step(list, unvisited, map, matrix, time, current_node, result)
+			true -> result
+		end
 	end
 
 	# How to solve day 16
