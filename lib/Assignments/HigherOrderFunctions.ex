@@ -21,6 +21,14 @@ defmodule HigherOrder do
 		end
 	end
 
+	def double_five_animal(list, args) do
+		case args do
+			:double -> double(list)
+			:five -> five(list)
+			:animal -> animal(list)
+		end
+	end
+
 	########################################################################################
 	# The important functions
 	# Enum.map(list, function)                           -----> For executing a function on all elements
