@@ -37,7 +37,7 @@ defmodule Day16 do
 	def create_unvisited_nodes_list([head|rest], result) do
 		{letter, rate, _} = head
 		cond do
-			rate > 0 -> create_unvisited_nodes_list(rest, [letter|result])
+			rate > 0 -> create_unvisited_nodes_list(rest, [{letter, rate}|result])
 			true -> create_unvisited_nodes_list(rest, result)
 		end
 	end
@@ -55,7 +55,7 @@ defmodule Day16 do
 		matrix = step1(matrix, length(list))
 		matrix = step2(matrix, list, map)
 		matrix = step3(matrix, length(list))
-		calculate_score_of_node(:A, :B, 13, map, matrix, 30)
+		execute_final(list, unvisited, map, matrix)
 	end
 
 	#While i < vertices - 1
@@ -141,12 +141,40 @@ defmodule Day16 do
 	######################################################################################################
 	# Finished implementing algorithm. Time to solve the puzzle
 
+	def execute_final(list, unvisited, map, matrix) do
+		get_list_of_scores(:A, unvisited, [], map, matrix, 30)
+		unvisited = remove_from_unvisited(unvisited, :D)
+		get_list_of_scores(:D, unvisited, [], map, matrix, 28)
+		unvisited = remove_from_unvisited(unvisited, :B)
+		get_list_of_scores(:B, unvisited, [], map, matrix, 25)
+		unvisited = remove_from_unvisited(unvisited, :J)
+		get_list_of_scores(:J, unvisited, [], map, matrix, 21)
+		unvisited = remove_from_unvisited(unvisited, :H)
+		get_list_of_scores(:H, unvisited, [], map, matrix, 13)
+	end
+
+	def get_list_of_scores(starting_node, [], result, map, matrix, time) do
+		result
+	end
+
+	def get_list_of_scores(starting_node, [unvisited|rest], result, map, matrix, time) do
+		{to, rate} = unvisited
+		{score, total_time, mod} = calculate_score_of_node(starting_node, to, rate, map, matrix, time)
+		get_list_of_scores(starting_node, rest, [{to, score, total_time, mod}|result], map, matrix, time)
+	end
+
 	def calculate_score_of_node(from, to, flowrate, map, matrix, time) do
 		{:ok, row} = Map.fetch(map, from)
 		{:ok, col} = Map.fetch(map, to)
 		time_to_get_to_location = Matrix.elem(matrix, row, col)
 		time_to_open_valve = 1
+		total_time = time_to_get_to_location + time_to_open_valve
 		score = flowrate*(time-time_to_get_to_location-time_to_open_valve)
+		{score, total_time, score/total_time/total_time}
+	end
+
+	def remove_from_unvisited(unvisited, remove) do
+		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
 	end
 
 	# How to solve day 16
