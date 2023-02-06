@@ -12,6 +12,15 @@ defmodule Day16 do
 		execute_program(list, unvisited, map, matrix)
 	end
 
+	def readtest() do
+		{_, content} = File.read("lib/AdventOfCode/Day16Test.txt")
+		list = String.split(content, "\r\n") |> parse_row([])
+		matrix = create_matrix(list)
+		unvisited = create_unvisited_nodes_list(list)
+		map = create_hash_map(list, Map.new(), 0)
+		execute_program(list, unvisited, map, matrix)
+	end
+
 	def parse_row([], results) do
 		Enum.reverse(results)
 	end
@@ -143,7 +152,9 @@ defmodule Day16 do
 	# Finished implementing algorithm. Time to solve the puzzle
 
 	def execute_final(list, unvisited, map, matrix) do
-		do_a_step(list, unvisited, map, matrix, 30, "AA", 0)
+		[head|rest] = list
+		{node, _, _} = head
+		do_a_step(list, unvisited, map, matrix, 30, node, 0)
 	end
 
 	def get_list_of_scores(starting_node, [], result, map, matrix, time) do
@@ -186,7 +197,7 @@ defmodule Day16 do
 		time_to_open_valve = 1
 		total_time = time_to_get_to_location + time_to_open_valve
 		score = flowrate*(time-time_to_get_to_location-time_to_open_valve)
-		{score, total_time, score/total_time/total_time}
+		{score, total_time, score/total_time/total_time/total_time}
 	end
 
 	def remove_from_unvisited(unvisited, remove) do
