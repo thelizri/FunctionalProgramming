@@ -1,5 +1,8 @@
 defmodule HigherOrder do
 
+	########################################################################################
+	# Recursively Transforming Lists
+
 	def double(numbers, result \\ [])
 	def double([], result) do result end
 	def double([number|rest], result) do
@@ -30,7 +33,7 @@ defmodule HigherOrder do
 	end
 
 	########################################################################################
-	# The important functions
+	# The Important Functions
 	# Enum.map(list, function)                           -----> For executing a function on all elements
 	# Enum.reduce(list, accumulator, function)           -----> For accumulating a result based on the function and list. For example the sum of the list.
 	# Enum.filter(list, function)						 -----> For filtering out items in the list that meet a certain condition
