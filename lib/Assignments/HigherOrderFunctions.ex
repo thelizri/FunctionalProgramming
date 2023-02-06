@@ -57,6 +57,14 @@ defmodule HigherOrder do
 	########################################################################################
 	# Filter
 
+	def odd([]) do [] end
+	def odd([num|rest]) do
+		cond do 
+			rem(num, 2) == 1 -> [num|odd(rest)]
+			true->odd(rest)
+		end
+	end
+
 
 	########################################################################################
 	# The Important Functions
