@@ -53,6 +53,7 @@ defmodule Day16 do
 
 	def execute_program(list, unvisited, map, matrix) do
 		matrix = step1(matrix, length(list))
+		matrix = step2(matrix, list, map)
 	end
 
 	#While i < vertices - 1
@@ -62,9 +63,29 @@ defmodule Day16 do
 	end
 
 	def step2(matrix, list, map) do
-
+		weights = get_weight_list(list, map, [])
+		loop_through_weights(matrix, weights)
 	end
 
+	#For step 2
+	def get_weight_list([], map, result) do List.flatten(result) end
+	#For step 2
+	def get_weight_list([head|rest], map, result) do
+		{from, _, to} = head
+		{:ok, from} = Map.fetch(map, from)
+		new = for item <- to do
+			{:ok, tto} = Map.fetch(map, item)
+			{from, tto}
+		end
+		get_weight_list(rest, map, [new|result])
+	end
+
+	#For step 2
+	def loop_through_weights(matrix, []) do matrix end
+	def loop_through_weights(matrix, [weight|rest]) do
+		{row, col} = weight
+		loop_through_weights(Matrix.set(matrix, row, col, 1), rest)
+	end
 
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
