@@ -49,6 +49,11 @@ defmodule HigherOrder do
 		function.(head, fold_right(rest, acc, function))
 	end
 
+	def fold_left([], acc, _) do acc end
+	def fold_left([head|rest], acc, function) do
+		fold_left(rest, function.(head, acc), function)
+	end
+
 	########################################################################################
 	# Filter
 
