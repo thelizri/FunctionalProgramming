@@ -55,6 +55,7 @@ defmodule Day16 do
 		matrix = step1(matrix, length(list))
 		matrix = step2(matrix, list, map)
 		matrix = step3(matrix, length(list))
+		calculate_score_of_node(:A, :B, 13, map, matrix, 30)
 	end
 
 	#While i < vertices - 1
@@ -139,6 +140,14 @@ defmodule Day16 do
 
 	######################################################################################################
 	# Finished implementing algorithm. Time to solve the puzzle
+
+	def calculate_score_of_node(from, to, flowrate, map, matrix, time) do
+		{:ok, row} = Map.fetch(map, from)
+		{:ok, col} = Map.fetch(map, to)
+		time_to_get_to_location = Matrix.elem(matrix, row, col)
+		time_to_open_valve = 1
+		score = flowrate*(time-time_to_get_to_location-time_to_open_valve)
+	end
 
 	# How to solve day 16
 	# Disregard all nodes with valve rates equal to zero
