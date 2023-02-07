@@ -157,6 +157,7 @@ defmodule Day16 do
 
 	def execute_final(list, unvisited, map, matrix) do
 		[{node, _, _}] = Enum.filter(list, fn({key, _, _}) -> key == "AA" end)
+		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		for unvisitedNode <- unvisited do
 			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
 		end
@@ -171,7 +172,7 @@ defmodule Day16 do
 		{key, valverate} = node
 		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
 		unvisited = remove_from_unvisited(unvisited, key)
-		score#
+		score
 
 		case unvisited do
 			[] -> score
