@@ -163,10 +163,6 @@ defmodule Day16 do
 		end |> Enum.max()
 	end
 
-	def take_a_step(current_node, node, [], map, matrix, time, score) do
-		score
-	end
-
 	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
 		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
