@@ -158,10 +158,8 @@ defmodule Day16 do
 	def execute_final(list, unvisited, map, matrix) do
 		[head|rest] = list
 		{node, valverate, _} = head
-		{score, time} = add_score(node, node, valverate, map, matrix, 30, 0)
-		unvisited = remove_from_unvisited(unvisited, node)
 		for unvisitedNode <- unvisited do
-			take_a_step(node, unvisitedNode, unvisited, map, matrix, time, score)
+			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
 		end
 		|> List.flatten() |> Enum.max
 	end
