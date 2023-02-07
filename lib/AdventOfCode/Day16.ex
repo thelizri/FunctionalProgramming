@@ -160,8 +160,7 @@ defmodule Day16 do
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		for unvisitedNode <- unvisited do
 			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
-		end
-		|> List.flatten() |> Enum.max
+		end |> Enum.max()
 	end
 
 	def take_a_step(current_node, node, [], map, matrix, time, score) do
@@ -179,7 +178,7 @@ defmodule Day16 do
 			_ ->
 				for unvisitedNode <- unvisited do
 					take_a_step(key, unvisitedNode, unvisited, map, matrix, time, score)
-				end
+				end |> Enum.max
 		end
 	end
 
