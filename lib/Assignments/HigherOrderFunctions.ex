@@ -44,6 +44,15 @@ defmodule HigherOrder do
 	def sum([sum]) do sum end
 	def sum([head|rest]) do head + sum(rest) end
 
+	def mini([head|rest]) do mini(rest, head) end
+	def mini([], min) do min end
+	def mini([head|rest], min) do
+		cond do
+			head < min -> mini(rest, head)
+			true -> mini(rest, min)
+		end
+	end
+
 	def fold_right([], acc, _) do acc end
 	def fold_right([head|rest], acc, function) do
 		function.(head, fold_right(rest, acc, function))
