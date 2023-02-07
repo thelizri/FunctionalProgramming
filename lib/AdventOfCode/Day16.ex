@@ -156,8 +156,7 @@ defmodule Day16 do
 	# List: {key, valverate, [to, to, to]}
 
 	def execute_final(list, unvisited, map, matrix) do
-		[head|rest] = list
-		{node, valverate, _} = head
+		[{node, _, _}] = Enum.filter(list, fn({key, _, _}) -> key == "AA" end)
 		for unvisitedNode <- unvisited do
 			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
 		end
