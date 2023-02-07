@@ -12,6 +12,15 @@ defmodule Day16 do
 		execute_program(list, unvisited, map, matrix)
 	end
 
+	def read(file) do
+		{_, content} = File.read("lib/AdventOfCode/" <> file)
+		list = String.split(content, "\r\n") |> parse_row([])
+		matrix = create_matrix(list)
+		unvisited = create_unvisited_nodes_list(list)
+		map = create_hash_map(list, Map.new(), 0)
+		execute_program(list, unvisited, map, matrix)
+	end
+
 	def readtest() do
 		{_, content} = File.read("lib/AdventOfCode/Day16Test.txt")
 		list = String.split(content, "\r\n") |> parse_row([])
@@ -163,12 +172,16 @@ defmodule Day16 do
 		end |> Enum.max()
 	end
 
+	def take_a_step(current_node, node, [unvisited], map, matrix, time, score) when time > 0 do
+		{key, valverate} = node
+		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
+		score
+	end
+
 	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
 		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
 		unvisited = remove_from_unvisited(unvisited, key)
-		score
-
 		case unvisited do
 			[] -> score
 			_ ->
@@ -183,9 +196,9 @@ defmodule Day16 do
 	end
 
 	def add_score(from, to, flowrate, map, matrix, time, current_score) do
-		cond do 
-			flowrate <= 0 -> {current_score, time}
-			true ->
+		#cond do 
+			#flowrate <= 0 -> {current_score, time}
+			#true ->
 			{:ok, row} = Map.fetch(map, from)
 			{:ok, col} = Map.fetch(map, to)
 			time_to_get_to_location = Matrix.elem(matrix, row, col)
@@ -194,7 +207,7 @@ defmodule Day16 do
 			time_left = time - total_time
 			score = flowrate*time_left
 			{score+current_score, time_left}
-		end
+		#end
 	end
 
 	def remove_from_unvisited(unvisited, remove) do
