@@ -150,80 +150,62 @@ defmodule Day16 do
 
 	######################################################################################################
 	# Finished implementing algorithm. Time to solve the puzzle
+	# DFS on unvisited nodes
+	# Visit node, 
+	# Unvisited: {key, valverate}
+	# List: {key, valverate, [to, to, to]}
 
 	def execute_final(list, unvisited, map, matrix) do
 		[head|rest] = list
-		{node, _, _} = head
-		do_a_step(list, unvisited, map, matrix, 30, node, 0)
-	end
-
-	def get_list_of_scores(starting_node, [], result, map, matrix, time) do
-		result
-	end
-
-	def get_list_of_scores(starting_node, [unvisited|rest], result, map, matrix, time) do
-		{to, rate} = unvisited
-		{score, total_time, mod} = calculate_score_of_node(starting_node, to, rate, map, matrix, time)
-		case total_time do
-			:infinity -> get_list_of_scores(starting_node, rest, result, map, matrix, time)
-			_ -> get_list_of_scores(starting_node, rest, [{to, score, total_time, mod}|result], map, matrix, time)
+		{node, valverate, _} = head
+		{score, time} = add_score(node, node, valverate, map, matrix, 30, 0)
+		unvisited = remove_from_unvisited(unvisited, node)
+		for unvisitedNode <- unvisited do
+			take_a_step(node, unvisitedNode, unvisited, map, matrix, time, score)
 		end
+		|> List.flatten() |> Enum.max
 	end
 
-	def get_max_score_from_list([], time_left, result) do result end
+	def take_a_step(current_node, node, [], map, matrix, time, score) do
+		score
+	end
 
-	def get_max_score_from_list([head|rest], time_left, result) do
-		{to, score, total_time, mod} = head
-		case result do
-			nil -> 
-				cond do 
-					total_time <= time_left -> get_max_score_from_list(rest, time_left, head) #Can cause error
-					true -> get_max_score_from_list(rest, time_left, result)
-				end
-			_ -> 
-				{_, _, _, modMax} = result
-				cond do
-					total_time > time_left -> get_max_score_from_list(rest, time_left, result)
-					mod > modMax -> get_max_score_from_list(rest, time_left, head)
-					true -> get_max_score_from_list(rest, time_left, result)
+	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
+		{key, valverate} = node
+		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
+		unvisited = remove_from_unvisited(unvisited, key)
+		score#
+
+		case unvisited do
+			[] -> score
+			_ ->
+				for unvisitedNode <- unvisited do
+					take_a_step(key, unvisitedNode, unvisited, map, matrix, time, score)
 				end
 		end
 	end
 
-	def calculate_score_of_node(from, to, flowrate, map, matrix, time) do
-		{:ok, row} = Map.fetch(map, from)
-		{:ok, col} = Map.fetch(map, to)
-		time_to_get_to_location = Matrix.elem(matrix, row, col)
-		time_to_open_valve = 1
-		total_time = time_to_get_to_location + time_to_open_valve
-		score = flowrate*(time-time_to_get_to_location-time_to_open_valve)
-		{score, total_time, score/total_time/total_time/total_time}
+	def take_a_step(current_node, node, unvisited, map, matrix, time, score) do
+		score
+	end
+
+	def add_score(from, to, flowrate, map, matrix, time, current_score) do
+		cond do 
+			flowrate <= 0 -> {current_score, time}
+			true ->
+			{:ok, row} = Map.fetch(map, from)
+			{:ok, col} = Map.fetch(map, to)
+			time_to_get_to_location = Matrix.elem(matrix, row, col)
+			time_to_open_valve = 1
+			total_time = time_to_get_to_location + time_to_open_valve
+			time_left = time - total_time
+			score = flowrate*time_left
+			{score+current_score, time_left}
+		end
 	end
 
 	def remove_from_unvisited(unvisited, remove) do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
-	end
-
-	def do_a_step(list, [], map, matrix, time, current_node, result) do result end
-
-	def do_a_step(list, unvisited, map, matrix, time, current_node, result) do
-		thelist = get_list_of_scores(current_node, unvisited, [], map, matrix, time)
-		|> get_max_score_from_list(time, nil)
-		case thelist do
-			nil -> result
-			_ -> 
-				{node, score, time_taken,_} = thelist
-				:io.write({node, score, time_taken})
-				IO.puts("    <- Step")
-				unvisited = remove_from_unvisited(unvisited, node)
-				result = result + score
-				current_node = node
-				time = time - time_taken
-				cond do 
-					time > 0 -> do_a_step(list, unvisited, map, matrix, time, current_node, result)
-					true -> result
-				end
-		end
 	end
 
 	# How to solve day 16
