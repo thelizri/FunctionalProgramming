@@ -217,7 +217,4 @@ defmodule Day16 do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
 	end
 
-	#1474 is the right answer
-	#My code gives me 1469
-
 end
