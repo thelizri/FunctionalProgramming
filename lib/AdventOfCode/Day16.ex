@@ -174,20 +174,27 @@ defmodule Day16 do
 
 	def take_a_step(current_node, node, [unvisited], map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
-		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
-		score
+		{newscore, time} = add_score(current_node, key, valverate, map, matrix, time, score)
+		cond do
+			time < 0 -> score
+			true -> newscore
+		end
 	end
 
 	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
-		{score, time} = add_score(current_node, key, valverate, map, matrix, time, score)
-		unvisited = remove_from_unvisited(unvisited, key)
-		case unvisited do
-			[] -> score
-			_ ->
-				for unvisitedNode <- unvisited do
-					take_a_step(key, unvisitedNode, unvisited, map, matrix, time, score)
-				end |> Enum.max
+		{newscore, time} = add_score(current_node, key, valverate, map, matrix, time, score)
+		cond do
+			time < 0 -> score
+			true -> 
+				unvisited = remove_from_unvisited(unvisited, key)
+				case unvisited do
+					[] -> newscore
+					_ ->
+						for unvisitedNode <- unvisited do
+							take_a_step(key, unvisitedNode, unvisited, map, matrix, time, newscore)
+						end |> Enum.max
+				end
 		end
 	end
 
@@ -196,28 +203,18 @@ defmodule Day16 do
 	end
 
 	def add_score(from, to, flowrate, map, matrix, time, current_score) do
-		#cond do 
-			#flowrate <= 0 -> {current_score, time}
-			#true ->
-			{:ok, row} = Map.fetch(map, from)
-			{:ok, col} = Map.fetch(map, to)
-			time_to_get_to_location = Matrix.elem(matrix, row, col)
-			time_to_open_valve = 1
-			total_time = time_to_get_to_location + time_to_open_valve
-			time_left = time - total_time
-			score = flowrate*time_left
-			{score+current_score, time_left}
-		#end
+		{:ok, row} = Map.fetch(map, from)
+		{:ok, col} = Map.fetch(map, to)
+		time_to_get_to_location = Matrix.elem(matrix, row, col)
+		time_to_open_valve = 1
+		total_time = time_to_get_to_location + time_to_open_valve
+		time_left = time - total_time
+		score = flowrate*time_left
+		{score+current_score, time_left}
 	end
 
 	def remove_from_unvisited(unvisited, remove) do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
 	end
-
-	# How to solve day 16
-	# Disregard all nodes with valve rates equal to zero
-	# Score of a node = valve_rate*(time_left-time_to_get_there)
-	# Pick node with highest score. Move to it. Open valve.
-	# Repeat.
 
 end
