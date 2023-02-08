@@ -7,7 +7,7 @@ defmodule Day10 do
 	end
 
 	def execute_program(content) do
-		execute_program(content, 1, 1, 5)
+		execute_program(content, 1, 1, 0)
 	end
 
 	def execute_program([], cycle, register, acc) do IO.puts("Cycle: #{cycle}, Acc: #{acc}") end
