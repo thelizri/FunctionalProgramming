@@ -214,10 +214,4 @@ defmodule Day16 do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
 	end
 
-	# How to solve day 16
-	# Disregard all nodes with valve rates equal to zero
-	# Score of a node = valve_rate*(time_left-time_to_get_there)
-	# Pick node with highest score. Move to it. Open valve.
-	# Repeat.
-
 end
