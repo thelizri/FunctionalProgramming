@@ -25,8 +25,8 @@ defmodule Day11 do
 			5 -> item + 1
 			6 -> item + 5
 			7 -> item * 19
-		end #Part 1: |> div(3) 
-		#Part 2: Myster number |> rem(746130)
+		end |> rem(9699690) #Part 1: |> div(3) 
+		#Part 2: Myster number |> rem(9699690)
 	end
 
 	def execute_one_monkey(number, map) do
