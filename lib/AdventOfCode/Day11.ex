@@ -1,16 +1,20 @@
 defmodule Day11 do
 
 
-	def read() do
+	def read(numofrounds) do
 		{:ok, content} = File.read("lib/AdventOfCode/Day11.txt")
 		content = String.split(content, "\r\n\r\n")
 		map = Map.new()
 		map = parse_block(content, map)
-		map = allrounds(20, map)
+		map = allrounds(numofrounds, map)
 		for num <- 0..7 do {:ok, value} = Map.fetch(map, {num, :inspections}); value end
-		|> Enum.sort
+		|> Enum.sort |> getLastTwo()
 	end
 
+	def getLastTwo([max2, max1]) do max1*max2 end
+	def getLastTwo([head|rest]) do getLastTwo(rest) end
+
+	#How do I reduce the numbers such that they don't lost fidelity?
 	def operations(monkey, item) do
 		case monkey do
 			0 -> item * 11
@@ -21,7 +25,8 @@ defmodule Day11 do
 			5 -> item + 1
 			6 -> item + 5
 			7 -> item * 19
-		end |> div(3)
+		end #Part 1: |> div(3) 
+		#Part 2: Myster number |> rem(746130)
 	end
 
 	def execute_one_monkey(number, map) do
@@ -62,11 +67,11 @@ defmodule Day11 do
 		map = cond do
 			rem(item, div) == 0 -> 
 				{:ok, true_items} = Map.fetch(map, {true_monkey, :items})
-				true_items = [item] ++ true_items
+				true_items = [item|true_items]
 				Map.put(map, {true_monkey, :items}, true_items)
 			true -> 
 				{:ok, false_items} = Map.fetch(map, {false_monkey, :items})
-				false_items = [item] ++ false_items
+				false_items = [item|false_items]
 				Map.put(map, {false_monkey, :items}, false_items)
 		end
 		monkey_throw_items(monkey, map, rest)
