@@ -97,6 +97,16 @@ defmodule Day12 do
 		cond do index >= length -> :error; true -> index; end
 	end
 
+	def getRight(index, {row, col}) do
+		index = index+1
+		cond do rem(index, col) == 0 -> :error; true -> index; end
+	end
+
+	def getLeft(index, {row, col}) do
+		cond do rem(index, col) == 0 -> :error; true -> index - 1; end
+	end
+
+
 end
 
 # Djikstra's Algorithm
