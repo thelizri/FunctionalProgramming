@@ -7,9 +7,11 @@ defmodule Day12 do
 
 	def executeProgram(content) do
 		rows = splitRows(content)
-		dim = getDimensions(rows) |> IO.inspect
-		list = convertToList(rows) |> IO.inspect |> convertListOfCharactersToNumbers
+		dim = getDimensions(rows)
+		list = convertToList(rows) |> convertListOfCharactersToNumbers
 		{from, to} = {getStartIndex(list), getDestinationIndex(list)}
+		list = replaceStartAndDestWithHeight(list)
+		createMapOfDistances(list, to)
 	end
 
 	def splitRows(content) do
@@ -39,28 +41,32 @@ defmodule Day12 do
 		Enum.find_index(list, fn(x)-> x == 83 end)
 	end
 
-	#E = 
+	#E = 69
 	def getDestinationIndex(list) do
 		Enum.find_index(list, fn(x)-> x == 69 end)
 	end
 
+	def replaceStartAndDestWithHeight(list) do
+		Enum.map(list, fn(x)-> case x do 69 -> 122; 83 -> 97; _ -> x; end end)
+	end
+
+	def createMapOfDistances(list, to) do
+		Enum.to_list(0..(length(list)-1)) |>
+		Enum.reduce(Map.new(), fn(x, map) -> Map.put(map, x, :infinity) end) |>
+		Map.put(to, 0)
+	end
+
 end
 
-# function Dijkstra(Graph, source):
-#     
-#     for each vertex v in Graph.Vertices:
-#         dist[v] ← INFINITY
-#         prev[v] ← UNDEFINED
-#         add v to Q
-#     dist[source] ← 0
-#     
-#     while Q is not empty:
-#         u ← vertex in Q with min dist[u]
-#         remove u from Q
-#         
-#         for each neighbor v of u still in Q:
-#             alt ← dist[u] + Graph.Edges(u, v)
-#             if alt < dist[v]:
-#                 dist[v] ← alt
-#                 prev[v] ← u
-#     return dist[], prev[]
+# Djikstra's Algorithm
+# Let distance of start vertex from start vertex = 0
+# Let distance of all other vertices from start = infinity
+#
+# Repeat
+# 	Visit the unvisited vertex with the smallest known distance from the start vertex
+# 	For the current vertex, examine its unvisited neighbours
+#	For the current vertex, calculate distance of each neighbour from start vertex
+# 	If the calculated distance of a vertex is less thna the known distance, update the shortest distance
+#	Update the previous vertex for each of the updated distances
+# 	Add the current vertex to the list of visited vertices
+# Until all vertices visited
