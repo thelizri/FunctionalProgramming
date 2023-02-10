@@ -65,7 +65,7 @@ defmodule Day12 do
 		{index, fetch(unvisited, index)}
 	end
 
-	def findMin(first = {vertexA, {distanceA, _}}, second = {vertexB, {distanceB, _}}) do
+	def findMin(first = {vertexA, {distanceA, prevA}}, second = {vertexB, {distanceB, prevB}}) do
 		cond do
 			distanceA == :infinity -> second
 			distanceB == :infinity -> first
@@ -79,11 +79,31 @@ defmodule Day12 do
 		ans
 	end
 
-	def executeProgram(distances, unvisited, fromTo, dim, height, length) when length > -1 do
-		isAdjacent(21, height, dim)
-		#executeProgram(distances, unvisited, fromTo, dim, height, length-1)
+	def removeVisited(distances, []) do distances end
+	def removeVisited(distances, [index|rest]) do
+		{_, distances} = Map.pop(distances, index)
+		removeVisited(distances, rest)
 	end
 
+	def executeProgram(distances, unvisited, fromTo, dim, height, length) when length > -1 do
+		{index, value} = getClosestUnvisited(unvisited)
+		neighbors = isAdjacent(index, height, dim)
+		distances = calcDistanceToNeighbors(index, neighbors, distances)
+		visited = [index]
+		unvisited = removeVisited(distances, visited)
+		executeProgram(distances, unvisited, fromTo, dim, height, visited, length-1)
+	end
+
+	def executeProgram(distances, unvisited, fromTo, dim, height, visited, length) when length > -1 do
+		{index, value} = getClosestUnvisited(unvisited) 
+		neighbors = isAdjacent(index, height, dim)
+		distances = calcDistanceToNeighbors(index, neighbors, distances)
+		visited = visited ++ [index]
+		unvisited = removeVisited(distances, visited)
+		executeProgram(distances, unvisited, fromTo, dim, height, visited, length-1)
+	end
+
+	def executeProgram(distances, _, {from, to}, _, _, _, _) do {dis, _} = fetch(distances, from); dis end
 	def executeProgram(distances, _, {from, to}, _, _, _) do {dis, _} = fetch(distances, from); dis end
 
 	def getUp(index, {row, col}) do
@@ -108,16 +128,43 @@ defmodule Day12 do
 
 	def isAdjacent(index, heightTuple, dim) do
 		height = elem(heightTuple, index)
-		heightUp = elem(heightTuple, getUp(index, dim))
-		heightDown = elem(heightTuple, getDown(index, dim))
-		heightLeft = elem(heightTuple, getLeft(index, dim))
-		heightRight = elem(heightTuple, getRight(index, dim))
-		list = [heightUp, heightDown, heightLeft, heightRight]
-		Enum.filter(list, fn(x)->cond do x >= height-1 -> true; true -> false; end end)
+		indexUp = getUp(index, dim); indexDown = getDown(index, dim);
+		indexLeft = getLeft(index, dim); indexRight = getRight(index, dim);
+		h1 = case indexUp do
+			:error -> {:error, :error}
+			_ -> {heightUp, indexUp} = {elem(heightTuple, indexUp), indexUp}
+		end 
+
+		h2 = case indexDown do
+			:error -> {:error, :error}
+			_ -> {heightDown, indexDown} = {elem(heightTuple, indexDown), indexDown}
+		end 
+
+		h3 = case indexLeft do
+			:error -> {:error, :error}
+			_ -> {heightLeft, indexLeft} = {elem(heightTuple, indexLeft), indexLeft}
+		end 
+
+		h4 = case indexRight do
+			:error -> {:error, :error}
+			_ -> {heightRight, indexRight} = {elem(heightTuple, indexRight), indexRight}
+		end 
+		list = [h1,h2,h3,h4]
+		Enum.filter(list, fn(x)-> {aheight, aposition} = x; cond do aheight == :error -> false; aheight >= height-1 -> true; true -> false; end end)
+		|> Enum.map(fn({h, p})-> p end)
 	end
 
-	def calcDistanceToNeighbors(currentPosition, neighbours, distances) do
-		
+	def calcDistanceToNeighbors(currentPosition, [], distances) do distances end
+	def calcDistanceToNeighbors(currentPosition, [neighbour|rest], distances) do
+		{mydis, prev} = fetch(distances, currentPosition)
+		{ndis, nprev} = fetch(distances, neighbour)
+		mydis = case mydis do
+			:infinity -> :infinity
+			_ -> mydis+1
+		end
+		{newPos, {newDis, newPrev}} =findMin({currentPosition, {mydis, currentPosition}}, {neighbour, {ndis, nprev}})
+		distances = Map.put(distances, neighbour, {newDis, newPrev})
+		calcDistanceToNeighbors(currentPosition, rest, distances)
 	end
 
 
