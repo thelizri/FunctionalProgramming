@@ -55,7 +55,7 @@ defmodule Day12 do
 		list = replaceStartAndDestWithHeight(list)
 		distances = createMapOfDistances(list, to)
 		unvisited = distances
-		executeProgram(distances, unvisited, {from, to}, dim, length(list)-1)
+		executeProgram(distances, unvisited, {from, to}, dim, List.to_tuple(list), length(list)-1)
 	end
 #######################################################################################################################################
 # Let's start executing the program
@@ -79,12 +79,12 @@ defmodule Day12 do
 		ans
 	end
 
-	def executeProgram(distances, _, {from, to}, _, _) do {dis, _} = fetch(distances, from); dis end
-
-	def executeProgram(distances, unvisited, fromTo, dim, length) when length > -1 do
-
-		executeProgram(distances, unvisited, fromTo, dim, length-1)
+	def executeProgram(distances, unvisited, fromTo, dim, height, length) when length > -1 do
+		isAdjacent(21, height, dim)
+		#executeProgram(distances, unvisited, fromTo, dim, height, length-1)
 	end
+
+	def executeProgram(distances, _, {from, to}, _, _, _) do {dis, _} = fetch(distances, from); dis end
 
 	def getUp(index, {row, col}) do
 		index = index-col
@@ -104,6 +104,20 @@ defmodule Day12 do
 
 	def getLeft(index, {row, col}) do
 		cond do rem(index, col) == 0 -> :error; true -> index - 1; end
+	end
+
+	def isAdjacent(index, heightTuple, dim) do
+		height = elem(heightTuple, index)
+		heightUp = elem(heightTuple, getUp(index, dim))
+		heightDown = elem(heightTuple, getDown(index, dim))
+		heightLeft = elem(heightTuple, getLeft(index, dim))
+		heightRight = elem(heightTuple, getRight(index, dim))
+		list = [heightUp, heightDown, heightLeft, heightRight]
+		Enum.filter(list, fn(x)->cond do x >= height-1 -> true; true -> false; end end)
+	end
+
+	def calcDistanceToNeighbors(currentPosition, neighbours, distances) do
+		
 	end
 
 
