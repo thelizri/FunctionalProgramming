@@ -55,7 +55,7 @@ defmodule Day12 do
 		list = replaceStartAndDestWithHeight(list)
 		distances = createMapOfDistances(list, to)
 		unvisited = distances
-		getClosestUnvisited(unvisited)
+		executeProgram(distances, unvisited, {from, to}, dim, length(list)-1)
 	end
 #######################################################################################################################################
 # Let's start executing the program
@@ -77,6 +77,13 @@ defmodule Day12 do
 	def fetch(map, x) do
 		{:ok, ans} = Map.fetch(map, x)
 		ans
+	end
+
+	def executeProgram(distances, _, {from, to}, _, _) do {dis, _} = fetch(distances, from); dis end
+
+	def executeProgram(distances, unvisited, fromTo, dim, length) when length > -1 do
+
+		executeProgram(distances, unvisited, fromTo, dim, length-1)
 	end
 
 end
