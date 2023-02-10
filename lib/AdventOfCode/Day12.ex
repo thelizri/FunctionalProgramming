@@ -2,16 +2,7 @@ defmodule Day12 do
 
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day12.txt")
-		executeProgram(content)
-	end
-
-	def executeProgram(content) do
-		rows = splitRows(content)
-		dim = getDimensions(rows)
-		list = convertToList(rows) |> convertListOfCharactersToNumbers
-		{from, to} = {getStartIndex(list), getDestinationIndex(list)}
-		list = replaceStartAndDestWithHeight(list)
-		createMapOfDistances(list, to)
+		initProgram(content)
 	end
 
 	def splitRows(content) do
@@ -52,8 +43,40 @@ defmodule Day12 do
 
 	def createMapOfDistances(list, to) do
 		Enum.to_list(0..(length(list)-1)) |>
-		Enum.reduce(Map.new(), fn(x, map) -> Map.put(map, x, :infinity) end) |>
-		Map.put(to, 0)
+		Enum.reduce(Map.new(), fn(x, map) -> Map.put(map, x, {:infinity, nil}) end) |>
+		Map.put(to, {0, nil})
+	end
+
+	def initProgram(content) do
+		rows = splitRows(content)
+		dim = getDimensions(rows)
+		list = convertToList(rows) |> convertListOfCharactersToNumbers
+		{from, to} = {getStartIndex(list), getDestinationIndex(list)}
+		list = replaceStartAndDestWithHeight(list)
+		distances = createMapOfDistances(list, to)
+		unvisited = distances
+		getClosestUnvisited(unvisited)
+	end
+#######################################################################################################################################
+# Let's start executing the program
+
+	def getClosestUnvisited(unvisited) do
+		index = Enum.reduce(Map.keys(unvisited), fn(x, acc) -> {ans, _} = findMin({x, fetch(unvisited, x)}, {acc, fetch(unvisited, acc)}); ans end)
+		{index, fetch(unvisited, index)}
+	end
+
+	def findMin(first = {vertexA, {distanceA, _}}, second = {vertexB, {distanceB, _}}) do
+		cond do
+			distanceA == :infinity -> second
+			distanceB == :infinity -> first
+			distanceA <= distanceB -> first
+			true -> second
+		end
+	end
+
+	def fetch(map, x) do
+		{:ok, ans} = Map.fetch(map, x)
+		ans
 	end
 
 end
