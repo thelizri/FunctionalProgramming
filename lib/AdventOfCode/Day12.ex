@@ -86,6 +86,17 @@ defmodule Day12 do
 		executeProgram(distances, unvisited, fromTo, dim, length-1)
 	end
 
+	def getUp(index, {row, col}) do
+		index = index-col
+		cond do index < 0 -> :error; true -> index; end
+	end
+
+	def getDown(index, {row, col}) do
+		length=row*col;
+		index = index+col
+		cond do index >= length -> :error; true -> index; end
+	end
+
 end
 
 # Djikstra's Algorithm
