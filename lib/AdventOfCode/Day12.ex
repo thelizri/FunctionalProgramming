@@ -103,8 +103,8 @@ defmodule Day12 do
 		executeProgram(distances, unvisited, fromTo, dim, height, visited, length-1)
 	end
 
-	def executeProgram(distances, _, {from, to}, _, _, _, _) do {dis, _} = fetch(distances, from); dis end
-	def executeProgram(distances, _, {from, to}, _, _, _) do {dis, _} = fetch(distances, from); dis end
+	def executeProgram(distances, _, {from, to}, _, height, _, _) do  executePart2(distances, height) end
+	def executeProgram(distances, _, {from, to}, _, height, _) do executePart2(distances, height) end
 
 	def getUp(index, {row, col}) do
 		index = index-col
@@ -167,6 +167,17 @@ defmodule Day12 do
 		calcDistanceToNeighbors(currentPosition, rest, distances)
 	end
 
+	def executePart2(distances, height) do
+		for index <- 0..(tuple_size(height)-1) do
+			cond do
+				elem(height, index) == 97 -> index
+				true -> nil
+			end
+		end |> Enum.filter(fn(x)-> case x do nil->false; _->true; end end)
+		|> Enum.map(fn(x)-> {dis, _} = fetch(distances, x); dis end)
+		|> Enum.min
+
+	end
 
 end
 
