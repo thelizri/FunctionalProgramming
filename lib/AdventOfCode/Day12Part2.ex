@@ -16,16 +16,6 @@ defmodule Day12Part2 do
 		{num_rows, num_columns}
 	end
 
-	def initProgram(content) do
-		rows = splitRows(content)
-		dim = getDimensions(rows)
-		list = Enum.map(rows, fn(x)->String.to_charlist(x) end)
-		|> List.flatten
-		destination = Enum.find_index(list, fn(x)-> x == 69 end)
-		map = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end) |> List.to_tuple
-		matrix = Matrix.new(length(list), length(list), :infinity)
-	end
-
 	def getUp(index, {row, col}) do
 		index = index-col
 		cond do index < 0 -> :error; true -> index; end
@@ -61,6 +51,27 @@ defmodule Day12Part2 do
 		cond do
 			heightFrom >= heightTo-1 -> getNeighbors(from, rest, map, results ++ [head])
 			true ->  getNeighbors(from, rest, map, results)
+		end
+	end
+
+	def initProgram(content) do
+		rows = splitRows(content)
+		dim = getDimensions(rows)
+		list = Enum.map(rows, fn(x)->String.to_charlist(x) end)
+		|> List.flatten
+		destination = Enum.find_index(list, fn(x)-> x == 69 end)
+		map = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end) |> List.to_tuple
+		length = length(list)
+		matrix = Matrix.new(length, length, nil)
+		Enum.to_list(0..(length-1)) |> Enum.reduce(matrix, fn(x, acc)-> Matrix.set(acc, x, x, 0) end)
+	end
+
+	def returnMin(value1, value2) do
+		case {value1, value2} do
+			{nil, nil} -> nil
+			{nil, value2} -> value2
+			{value1, nil} -> value1
+			{value1, value2} -> cond do value1 < value2 -> value1; true -> value2; end
 		end
 	end
 
