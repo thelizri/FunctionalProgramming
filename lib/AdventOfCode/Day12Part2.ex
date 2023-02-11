@@ -23,8 +23,7 @@ defmodule Day12Part2 do
 		|> List.flatten
 		destination = Enum.find_index(list, fn(x)-> x == 69 end)
 		map = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end) |> List.to_tuple
-		adj = getAdjacent(20, dim)
-		getNeighbors(20, adj, map, [])
+		matrix = Matrix.new(length(list), length(list), :infinity)
 	end
 
 	def getUp(index, {row, col}) do
@@ -64,6 +63,7 @@ defmodule Day12Part2 do
 			true ->  getNeighbors(from, rest, map, results)
 		end
 	end
+
 
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
