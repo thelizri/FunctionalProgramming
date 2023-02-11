@@ -22,7 +22,8 @@ defmodule Day12Part2 do
 		list = Enum.map(rows, fn(x)->String.to_charlist(x) end)
 		|> List.flatten
 		destination = Enum.find_index(list, fn(x)-> x == 69 end)
-		list = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end)
+		map = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end)
+		getAdjacent(20, dim)
 	end
 
 	def getUp(index, {row, col}) do
@@ -43,6 +44,14 @@ defmodule Day12Part2 do
 
 	def getLeft(index, {row, col}) do
 		cond do rem(index, col) == 0 -> :error; true -> index - 1; end
+	end
+
+	def getAdjacent(index, dim) do
+		up = getUp(index, dim)
+		down = getDown(index, dim)
+		left = getLeft(index, dim)
+		right = getRight(index, dim)
+		Enum.filter([up, down, left, right], fn(x)-> case x do :error->false; _ -> true; end end)
 	end
 
 	# Floyd-Warshall Algorithm
