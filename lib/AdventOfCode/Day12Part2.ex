@@ -63,7 +63,8 @@ defmodule Day12Part2 do
 		map = Enum.map(list, fn(x)-> case x do 83 -> 97; 69 -> 122; _ -> x; end end) |> List.to_tuple
 		length = length(list)
 		matrix = Matrix.new(length, length, nil)
-		Enum.to_list(0..(length-1)) |> Enum.reduce(matrix, fn(x, acc)-> Matrix.set(acc, x, x, 0) end)
+		matrix = Enum.to_list(0..(length-1)) |> Enum.reduce(matrix, fn(x, acc)-> Matrix.set(acc, x, x, 0) end)
+		executeProgram(matrix, map, destination, dim)
 	end
 
 	def returnMin(value1, value2) do
@@ -73,6 +74,19 @@ defmodule Day12Part2 do
 			{value1, nil} -> value1
 			{value1, value2} -> cond do value1 < value2 -> value1; true -> value2; end
 		end
+	end
+
+	def executeProgram(matrix, map, destination, dim) do
+		length = Enum.to_list(0..(tuple_size(map)-1))
+		updateMatrix(matrix, map, dim, length)
+	end
+
+	def updateMatrix(matrix, map, dim, []) do matrix end
+	def updateMatrix(matrix, map, dim, [index|rest]) do
+		adj = getAdjacent(index, dim)
+		neighbors = getNeighbors(index, adj, map, [])
+		matrix = Enum.reduce(neighbors, matrix, fn(x, acc) -> Matrix.set(acc, index, x, 1) end)
+		updateMatrix(matrix, map, dim, rest)
 	end
 
 
