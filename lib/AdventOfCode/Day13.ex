@@ -11,37 +11,29 @@ defmodule Day13 do
 		{list2, _} = Code.eval_string(str2)
 		case compareRows(list1, list2) do
 			true -> checkBlock(rest, index+1, result ++ [index])
-			false -> checkBlock(rest, index+1, result)
+			_ -> checkBlock(rest, index+1, result)
 		end
 	end
 
-	def compareInts(first, second) when is_integer(first) and is_integer(second) do
-		first <= second
-	end
-
-	def compareRows([], []) do true end
+	def compareRows([], []) do :equal end
 	def compareRows(head, []) do false end
 	def compareRows([], head) do true end
 	def compareRows([head1|rest1], [head2|rest2]) do
-		type = {is_integer(head1), is_integer(head2)}
-		result = case type do
-			{true, true} -> compareInts(head1, head2)
-			{true, false} -> compareRows(head1, [head2])
-			{false, true} -> compareRows([head1], head2)
-			{false, false} -> compareRows(head1, head2)
-		end
+		result = compareRows(head1, head2)
 		case result do
-			false -> false
-			true -> compareRows(rest1, rest2)
+			:equal -> compareRows(rest1, rest2)
+			_ -> result
 		end
 	end
-	#def compareRows([head1|rest1], head2) do
-	#	compareRows([head1|rest1], [head2])
-	#end
-	#def compareRows(head1, [head2|rest2]) do
-	#	compareRows([head1], [head2|rest2])
-	#end
-	def compareRows(head1, head2) do head1 <= head2 end
+	def compareRows([head1|rest1], head2) do compareRows([head1|rest1], [head2]) end
+	def compareRows(head1, [head2|rest2]) do compareRows([head1], [head2|rest2]) end
+	def compareRows(head1, head2) do 
+		cond do
+			head1 < head2 -> true
+			head1 == head2 -> :equal
+			head1 > head2 -> false
+		end
+	end
 end
 
 # Rules
