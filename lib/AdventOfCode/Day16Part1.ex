@@ -3,6 +3,10 @@ defmodule Day16Part1 do
 	#All tunnels take one minute to travel through
 	#Each valve takes one minute to open
 
+	# Step 1: Parse input.
+	# Step 2: Use Floyd-Warshall Algorithm to create a distance matrix.
+	# Step 3: Use DFS to solve problem.
+
 	def read() do
 		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
 		list = String.split(content, "\r\n") |> parse_row([])
@@ -67,10 +71,7 @@ defmodule Day16Part1 do
 		weights = get_weight_list(list, map, [])
 		Enum.reduce(weights, matrix, fn(x, acc)->{row, col}=x; Matrix.set(acc, row, col, 1) end)
 	end
-
-	#For step 2
 	def get_weight_list([], _, result) do List.flatten(result) end
-	#For step 2
 	def get_weight_list([head|rest], map, result) do
 		{from, _, to} = head
 		{:ok, from} = Map.fetch(map, from)
@@ -84,8 +85,6 @@ defmodule Day16Part1 do
 	def step3(matrix, vertices) do
 		loop( 0, 0, 0, vertices, matrix, :k)
 	end
-
-
 	#For step 3. Nested loop
 	#While k < length-1, i < length-1, j < length-1 
 	def loop(k, i, j, length, matrix, :k) do
@@ -129,9 +128,7 @@ defmodule Day16Part1 do
 	#			end if
 
 	######################################################################################################
-	# Finished implementing algorithm. Time to solve the puzzle
-	# DFS on unvisited nodes
-	# Visit node, 
+	# Finished creating distance matrix. Time to use DFS and solve problem.
 	# Unvisited: {key, valverate}
 	# List: {key, valverate, [to, to, to]}
 
