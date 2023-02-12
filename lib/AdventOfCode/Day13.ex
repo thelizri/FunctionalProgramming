@@ -1,7 +1,8 @@
 defmodule Day13 do
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day13.txt")
-		String.split(content, "\r\n\r\n") |> checkBlock(1, [])
+		String.split(content, "\r\n", trim: true) ++ ["[[2]]"] ++ ["[[6]]"] #|> checkBlock(1, [])
+		|> part2()
 	end
 
 	def checkBlock([], _, result) do IO.inspect(result); Enum.sum(result) end
@@ -33,6 +34,15 @@ defmodule Day13 do
 			head1 == head2 -> :equal
 			head1 > head2 -> false
 		end
+	end
+
+	def part2(content) do
+		sorted = Enum.map(content, fn(x) -> {list, _} = Code.eval_string(x); list end)
+		|> Enum.sort(fn(first, second)->compareRows(first, second) end)
+		firstDividerIndex = Enum.find_index(sorted, fn x -> x == [[2]] end) + 1
+		secondDividerIndex = Enum.find_index(sorted, fn x -> x == [[6]] end) + 1
+		IO.inspect({firstDividerIndex, secondDividerIndex})
+		firstDividerIndex*secondDividerIndex
 	end
 end
 
