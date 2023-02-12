@@ -10,3 +10,8 @@ defmodule Day13 do
 		{list2, _} = Code.eval_string(str2)
 	end
 end
+
+# Rules
+# 1. If both values are integers, the lower integer should come first.
+# 2. If both values are lists, compare the first value of each list, then the second value, and so on.
+# 3. If exactly one value is an integer, convert the integer to a list which contains that integer as its only value, then retry the comparison.
