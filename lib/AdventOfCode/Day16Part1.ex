@@ -35,7 +35,7 @@ defmodule Day16Part1 do
 	end
 
 	def create_unvisited_nodes_list(list) do
-		Enum.filter(list, fn(x)->{letter, rate, _} = x; rate > 0 end)
+		Enum.filter(list, fn(x)->{_, rate, _} = x; rate > 0 end)
 		|> Enum.map(fn(x)->{letter, rate, _} = x; {letter, rate} end)
 	end
 
@@ -54,7 +54,7 @@ defmodule Day16Part1 do
 		matrix = create_matrix(list)
 		matrix = step2(matrix, list, map)
 		matrix = step3(matrix, length(list))
-		execute_final(list, unvisited, map, matrix)
+		execute_final(unvisited, map, matrix)
 	end
 
 	def create_matrix(list) do
@@ -69,7 +69,7 @@ defmodule Day16Part1 do
 	end
 
 	#For step 2
-	def get_weight_list([], map, result) do List.flatten(result) end
+	def get_weight_list([], _, result) do List.flatten(result) end
 	#For step 2
 	def get_weight_list([head|rest], map, result) do
 		{from, _, to} = head
@@ -114,8 +114,6 @@ defmodule Day16Part1 do
 		cond do j < length-1 -> loop(k, i, j+1, length, matrix, :j); true -> matrix; end
 	end
 
-
-
 	# Floyd-Warshall Algorithm
 	# let V = number of vetrices in graph
 	# let dist = V * V array of minimum distances
@@ -137,15 +135,15 @@ defmodule Day16Part1 do
 	# Unvisited: {key, valverate}
 	# List: {key, valverate, [to, to, to]}
 
-	def execute_final(list, unvisited, map, matrix) do
-		[{node, _, _}] = Enum.filter(list, fn({key, _, _}) -> key == "AA" end)
+	def execute_final(unvisited, map, matrix) do
+		node = "AA"
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		for unvisitedNode <- unvisited do
 			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
 		end |> Enum.max()
 	end
 
-	def take_a_step(current_node, node, [unvisited], map, matrix, time, score) when time > 0 do
+	def take_a_step(current_node, node, [], map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
 		{newscore, time} = add_score(current_node, key, valverate, map, matrix, time, score)
 		cond do
@@ -171,7 +169,7 @@ defmodule Day16Part1 do
 		end
 	end
 
-	def take_a_step(current_node, node, unvisited, map, matrix, time, score) do
+	def take_a_step(_, _, _, _, _, _, score) do
 		score
 	end
 
@@ -179,8 +177,7 @@ defmodule Day16Part1 do
 		{:ok, row} = Map.fetch(map, from)
 		{:ok, col} = Map.fetch(map, to)
 		time_to_get_to_location = Matrix.elem(matrix, row, col)
-		time_to_open_valve = 1
-		total_time = time_to_get_to_location + time_to_open_valve
+		total_time = time_to_get_to_location + 1
 		time_left = time - total_time
 		score = flowrate*time_left
 		{score+current_score, time_left}
