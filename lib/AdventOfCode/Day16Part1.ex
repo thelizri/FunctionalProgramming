@@ -7,16 +7,11 @@ defmodule Day16Part1 do
 	# Step 2: Use Floyd-Warshall Algorithm to create a distance matrix.
 	# Step 3: Use DFS to solve problem.
 
-	def read() do
-		{_, content} = File.read("lib/AdventOfCode/Day16.txt")
-		list = String.split(content, "\r\n") |> parse_row([])
-		unvisited = create_unvisited_nodes_list(list)
-		map = create_hash_map(list, Map.new(), 0)
-		execute_program(list, unvisited, map)
-	end
-
-	def readtest() do
-		{_, content} = File.read("lib/AdventOfCode/Day16Test.txt")
+	def read(file \\ nil) do
+		{_, content} = case file do
+			:test -> File.read("lib/AdventOfCode/Day16Test.txt")
+			_ -> File.read("lib/AdventOfCode/Day16.txt")
+		end
 		list = String.split(content, "\r\n") |> parse_row([])
 		unvisited = create_unvisited_nodes_list(list)
 		map = create_hash_map(list, Map.new(), 0)
