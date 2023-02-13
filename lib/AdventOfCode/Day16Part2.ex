@@ -129,7 +129,6 @@ defmodule Day16Part2 do
 	# We need to divide the list of unvisited equally among the two people
 
 	def execute_final(unvisited, map, matrix) do
-		node = "AA"
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		combinations = Combination.combine(unvisited, div(length(unvisited),2))
 		execute_part2(unvisited, map, matrix, combinations, 0)
