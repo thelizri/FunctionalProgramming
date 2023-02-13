@@ -187,20 +187,4 @@ defmodule Day16Part2 do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
 	end
 
-
-	##################################################################################################################
-	# Experimenting with permutations and combinations
-
-	# Create a combination
-	# Filter out the combination from the rest of the unvisited list
-	# Then executed program on both of them
-
-	def test(list) do
-		IO.inspect(list)
-		length = div(length(list),2)
-		[prop|rest] = Combination.combine(list, div(length(list),2))
-		IO.inspect(prop)
-		Enum.filter(list, fn(x)-> not Enum.member?(prop, x) end)
-	end
-
 end
