@@ -126,13 +126,30 @@ defmodule Day16Part2 do
 	# Finished creating distance matrix. Time to use DFS and solve problem.
 	# Unvisited: {key, valverate}
 	# List: {key, valverate, [to, to, to]}
+	# We need to divide the list of unvisited equally among the two people
 
 	def execute_final(unvisited, map, matrix) do
 		node = "AA"
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
-		for unvisitedNode <- unvisited do
-			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
+		combinations = Combination.combine(unvisited, div(length(unvisited),2))
+		execute_part2(unvisited, map, matrix, combinations, 0)
+	end
+
+	def execute_part2(_, _, _, [], result) do result end
+	def execute_part2(unvisited, map, matrix, [combination|rest], result) do
+		node = "AA"
+		otherhalf = Enum.filter(unvisited, fn(x)-> not Enum.member?(combination, x) end)
+		first = for unvisitedNode <- otherhalf do
+			take_a_step(node, unvisitedNode, otherhalf, map, matrix, 26, 0)
 		end |> Enum.max()
+		second = for unvisitedNode <- combination do
+			take_a_step(node, unvisitedNode, combination, map, matrix, 26, 0)
+		end |> Enum.max()
+		score = first + second
+		cond do
+			score > result -> execute_part2(unvisited, map, matrix, rest, score)
+			true -> execute_part2(unvisited, map, matrix, rest, result)
+		end
 	end
 
 	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
@@ -168,6 +185,22 @@ defmodule Day16Part2 do
 
 	def remove_from_unvisited(unvisited, remove) do
 		Enum.filter(unvisited, fn(x) -> {node, _} = x; node != remove end)
+	end
+
+
+	##################################################################################################################
+	# Experimenting with permutations and combinations
+
+	# Create a combination
+	# Filter out the combination from the rest of the unvisited list
+	# Then executed program on both of them
+
+	def test(list) do
+		IO.inspect(list)
+		length = div(length(list),2)
+		[prop|rest] = Combination.combine(list, div(length(list),2))
+		IO.inspect(prop)
+		Enum.filter(list, fn(x)-> not Enum.member?(prop, x) end)
 	end
 
 end
