@@ -1,4 +1,4 @@
-# Cards
+# FunctionalProgramming
 
 **Commands**  
 mix new project_name  
@@ -13,7 +13,7 @@ by adding `cards` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:cards, "~> 0.1.0"}
+    {:FunctionalProgramming, "~> 0.1.0"}
   ]
 end
 ```
