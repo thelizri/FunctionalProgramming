@@ -23,4 +23,14 @@ defmodule Day25 do
 			_ -> String.to_integer(string)
 		end
 	end
+
+	def base10To5(num, result \\ "") do
+		result = Integer.to_string(rem(num, 5)) <> result
+		num = div(num, 5)
+		cond do
+			num < 5 -> Integer.to_string(num) <> result |> String.to_integer
+			true -> base10To5(num, result)
+		end
+	end
+
 end
