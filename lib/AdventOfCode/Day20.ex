@@ -5,7 +5,8 @@ defmodule Day20 do
 		{list, _} = String.split(content, "\r\n", trim: true)
 		|> Enum.map(fn(x)-> String.to_integer(x) end)
 		|> Enum.reduce({[],0},fn(x, {list, index})-> {list ++ [{x, index}], index+1} end)
-		moveElem(list, 0) |> moveElem(1) |> moveElem(2) |> moveElem(3) |> moveElem(4) |> present()
+		moveElem(list, 0) |> moveElem(1) |> moveElem(2)  |> moveElem(3)|> moveElem(4) |> moveElem(5) |> moveElem(6) |> present()
+		|> sum()
 	end
 
 	def present(list) do
@@ -24,11 +25,12 @@ defmodule Day20 do
 		position = Enum.find_index(list, fn({val, pos})-> pos == index end)
 		{:ok, tuple} = Enum.fetch(list, position)
 		{value, _} = tuple
-		list = List.replace_at(list, position, nil)
+		val = Integer.mod(value, length)
 		newPos = cond do
-			value + position < 0 -> Integer.mod(value+position, length)
-			true -> Integer.mod(value+position, length)+1
+			value < 0 -> Integer.mod(val+position, length)
+			true -> Integer.mod(val+position, length) + 1
 		end
+		list = List.replace_at(list, position, nil)
 		list = List.insert_at(list, newPos, tuple)
 		list = Enum.filter(list, fn(x) -> x != nil end)
 	end
