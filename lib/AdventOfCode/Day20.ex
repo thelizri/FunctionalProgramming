@@ -5,7 +5,11 @@ defmodule Day20 do
 		{list, _} = String.split(content, "\r\n", trim: true)
 		|> Enum.map(fn(x)-> String.to_integer(x) end)
 		|> Enum.reduce({[],0},fn(x, {list, index})-> {list ++ [{x, index}], index+1} end)
-		list
+		moveElem(list, 0) |> moveElem(1) |> moveElem(2) |> moveElem(3) |> moveElem(4) |> present()
+	end
+
+	def present(list) do
+		Enum.map(list, fn({val, pos}) -> val end)
 	end
 
 	def sum(list) do
@@ -13,6 +17,20 @@ defmodule Day20 do
 		s2 = getAt(2000, list)
 		s3 = getAt(3000, list)
 		s1+s2+s3
+	end
+
+	def moveElem(list, index) do
+		length = length(list)
+		position = Enum.find_index(list, fn({val, pos})-> pos == index end)
+		{:ok, tuple} = Enum.fetch(list, position)
+		{value, _} = tuple
+		list = List.replace_at(list, position, nil)
+		newPos = cond do
+			value + position < 0 -> Integer.mod(value+position, length)
+			true -> Integer.mod(value+position, length)+1
+		end
+		list = List.insert_at(list, newPos, tuple)
+		list = Enum.filter(list, fn(x) -> x != nil end)
 	end
 
 	def getAt(num, list) do
