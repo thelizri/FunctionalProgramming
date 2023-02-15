@@ -12,7 +12,6 @@ defmodule Day20 do
 		length = length(list)-1
 		list = Enum.reduce(0..length, list, fn(x, acc)->moveElem(acc, x) end)
 		|> present()
-		print(list) |> :io.write()
 		sum(list)
 	end
 
@@ -24,22 +23,8 @@ defmodule Day20 do
 	def sum(list) do
 		s1 = getAt(1000, list)
 		s2 = getAt(2000, list)
-		s3 = getAt(3000, list)
+		s3 = getAt(3001, list)
 		s1+s2+s3
-	end
-
-	def print(list) do
-		[
-		getAt(999, list),
-		getAt(1000, list),
-		getAt(1001, list),
-		getAt(1999, list),
-		getAt(2000, list),
-		getAt(2001, list),
-		getAt(2999, list),
-		getAt(3000, list),
-		getAt(3001, list)
-		]
 	end
 
 	def moveElem(list, index) do
@@ -58,9 +43,9 @@ defmodule Day20 do
 	end
 
 	def getAt(num, list) do
-		length = length(list) |> IO.inspect
+		length = length(list)
 		index = Integer.mod(num, length)
-		start = Enum.find_index(list, fn(x)-> x==0 end) |> IO.inspect
+		start = Enum.find_index(list, fn(x)-> x==0 end)
 		Enum.at(list, Integer.mod(index+start, length))
 	end
 
