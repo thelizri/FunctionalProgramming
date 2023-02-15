@@ -5,9 +5,17 @@ defmodule Day20 do
 		{list, _} = String.split(content, "\r\n", trim: true)
 		|> Enum.map(fn(x)-> String.to_integer(x) end)
 		|> Enum.reduce({[],0},fn(x, {list, index})-> {list ++ [{x, index}], index+1} end)
-		moveElem(list, 0) |> moveElem(1) |> moveElem(2)  |> moveElem(3)|> moveElem(4) |> moveElem(5) |> moveElem(6) |> present()
-		|> sum()
+		execute(list)
 	end
+
+	def execute(list) do
+		length = length(list)-1
+		list = Enum.reduce(0..length, list, fn(x, acc)->moveElem(acc, x) end)
+		|> present()
+		print(list) |> :io.write()
+		sum(list)
+	end
+
 
 	def present(list) do
 		Enum.map(list, fn({val, pos}) -> val end)
@@ -18,6 +26,20 @@ defmodule Day20 do
 		s2 = getAt(2000, list)
 		s3 = getAt(3000, list)
 		s1+s2+s3
+	end
+
+	def print(list) do
+		[
+		getAt(999, list),
+		getAt(1000, list),
+		getAt(1001, list),
+		getAt(1999, list),
+		getAt(2000, list),
+		getAt(2001, list),
+		getAt(2999, list),
+		getAt(3000, list),
+		getAt(3001, list)
+		]
 	end
 
 	def moveElem(list, index) do
@@ -36,10 +58,10 @@ defmodule Day20 do
 	end
 
 	def getAt(num, list) do
-		length = length(list)
-		index = rem(num, length)
-		start = Enum.find_index(list, fn(x)-> x==0 end)
-		Enum.at(list, rem(index+start, length))
+		length = length(list) |> IO.inspect
+		index = Integer.mod(num, length)
+		start = Enum.find_index(list, fn(x)-> x==0 end) |> IO.inspect
+		Enum.at(list, Integer.mod(index+start, length))
 	end
 
 end
