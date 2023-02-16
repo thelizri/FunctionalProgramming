@@ -61,6 +61,15 @@ defmodule Day15 do
 		end
 	end
 
+	def isMember(list, a..b) do
+		result = Enum.map(a..b, fn(num)->{num, isMember(list, num)} end)
+		|> Enum.filter(fn({num, bool})-> !bool end)
+		case result do
+			[] -> true
+			_ -> result
+		end
+	end
+
 	def isMember(list, num) do
 		Enum.reduce(list, false, fn(x, acc) -> 
 			cond do 
