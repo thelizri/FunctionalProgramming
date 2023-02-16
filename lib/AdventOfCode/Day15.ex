@@ -4,9 +4,16 @@ defmodule Day15 do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
 		list = String.split(content, "\r\n", trim: true) |> parse()
 		list = transform(list) #|> all_ranges() |> final()
-		for num <- 0..20 do
+		tt = for num <- 0..20 do
 			{num, all_ranges(list, num) |> final()}
 		end
+		for t <- tt do
+			{row, list} = t
+			case rs = isMember(list, 0..20) do
+				true -> nil
+				_ -> {row, rs}
+			end
+		end |> Enum.filter(fn(x) -> x != nil end)
 	end
 
 	def parse(list) do
