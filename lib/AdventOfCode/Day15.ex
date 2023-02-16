@@ -3,7 +3,7 @@ defmodule Day15 do
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
 		String.split(content, "\r\n", trim: true) |> parse()
-		|> transform() |> all_ranges()
+		|> transform() |> all_ranges() |> final()
 	end
 
 	def parse(list) do
@@ -24,10 +24,42 @@ defmodule Day15 do
 	def range({sX, sY, d}, y) when abs(y-sY) <= d do
 		n = d - abs(y-sY)
 		case n do
-			0 -> {sX, sX}
-			_ -> {sX-n, sX+n}
+			0 -> sX..sX
+			_ -> (sX-n)..(sX+n)
 		end
 	end
 
 	def range(_, _) do nil end
+
+	def union(a..b, x..y) do
+		if Range.disjoint?(a..b, x..y) do
+			nil
+		else
+			cond do
+				x<=b and x >= a -> a..y
+				true -> x..b
+			end
+		end
+	end
+
+	def combine([], result) do result end
+	def combine([only], result) do [only]++result end
+	def combine([first, second|rest], result) do
+		case union(first, second) do
+			nil -> combine(rest, [first, second] ++ result)
+			set -> combine(rest, [set]++result)
+		end
+	end
+
+	def final(list) do
+		res = combine(list, [])
+		if res == list do
+			IO.inspect(res)
+			Enum.map(list, fn(x)->Range.size(x) end)
+			|> Enum.sum()
+		else
+			final(res)
+		end
+	end
+
 end
