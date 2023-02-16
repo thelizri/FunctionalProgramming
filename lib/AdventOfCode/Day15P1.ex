@@ -31,15 +31,35 @@ defmodule Day15P1 do
 		end
 	end
 
-	def findSpot(list) do
-		for i <- 0..20, j <- 0..20 do
-			bool=checkIfInRangeOfAll?({i,j},list)
-			case bool do
-				true -> nil
-				false -> {i, j}
-			end
-		end |> Enum.filter(fn(x) -> x != nil end) |> Enum.at(0)
+	#def findSpot(list) do
+	#	for i <- 0..20, j <- 0..20 do
+	#		bool=checkIfInRangeOfAll?({i,j},list)
+	#		case bool do
+	#			true -> nil
+	#			false -> {i, j}
+	#		end
+	#	end |> Enum.filter(fn(x) -> x != nil end) |> Enum.at(0)
+	#end
+
+	def findSpot(list, {i,j} \\ {0, 0}) do
+		case checkIfInRangeOfAll?({i, j}, list) do
+			false -> {i, j}
+			true -> 
+				case counter = increase_counter(i, j) do
+					:end -> :noresult
+					_ -> findSpot(list, counter)
+				end
+		end
 	end
+
+	def increase_counter(i, j) when i <= 20 and j <= 20 do
+		case {i, j} do
+			{20, 20} -> :end
+			{_, 20} -> {i+1, 0}
+			{_, _} -> {i, j+1}
+		end 
+	end
+	def increase_counter(_, _) do :end end
 
 	def calcScore({x, y}) do
 		4000000*x + y
