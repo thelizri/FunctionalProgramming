@@ -3,7 +3,7 @@ defmodule Day15 do
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
 		String.split(content, "\r\n", trim: true) |> parse()
-		|> transform()
+		|> transform() |> all_ranges()
 	end
 
 	def parse(list) do
@@ -14,6 +14,11 @@ defmodule Day15 do
 	def transform(list) do
 		transform_row = fn([sX, sY, bX, bY])-> d=abs(bX-sX)+abs(bY-sY); {sX, sY, d} end
 		Enum.map(list, fn(x)-> transform_row.(x) end)
+	end
+
+	def all_ranges(list) do
+		Enum.map(list, fn(x)-> range(x, 20) end)
+		|> Enum.filter(fn(x)-> x != nil end)
 	end
 
 	def range({sX, sY, d}, y) when abs(y-sY) <= d do
