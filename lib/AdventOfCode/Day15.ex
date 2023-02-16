@@ -61,6 +61,15 @@ defmodule Day15 do
 		end
 	end
 
+	def isMember(list, num) do
+		Enum.reduce(list, false, fn(x, acc) -> 
+			cond do 
+				Enum.member?(x, num) -> true
+				true -> acc
+			end
+				end )
+	end
+
 	# 0 <= x,y <= 20
 
 end
