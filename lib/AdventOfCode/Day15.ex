@@ -2,8 +2,9 @@ defmodule Day15 do
 
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
-		String.split(content, "\r\n", trim: true) |> parse()
-		|> transform() |> all_ranges() |> final()
+		list = String.split(content, "\r\n", trim: true) |> parse()
+
+		transform(list) |> all_ranges() |> final()
 	end
 
 	def parse(list) do
@@ -17,7 +18,7 @@ defmodule Day15 do
 	end
 
 	def all_ranges(list) do
-		Enum.map(list, fn(x)-> range(x, 20) end)
+		Enum.map(list, fn(x)-> range(x, 2000000) end)
 		|> Enum.filter(fn(x)-> x != nil end)
 	end
 
@@ -35,10 +36,7 @@ defmodule Day15 do
 		if Range.disjoint?(a..b, x..y) do
 			nil
 		else
-			cond do
-				x<=b and x >= a -> a..y
-				true -> x..b
-			end
+			min(a,x)..max(b,y)
 		end
 	end
 
@@ -55,8 +53,7 @@ defmodule Day15 do
 		res = combine(list, [])
 		if res == list do
 			IO.inspect(res)
-			Enum.map(list, fn(x)->Range.size(x) end)
-			|> Enum.sum()
+			Enum.concat(res) |> MapSet.new() |> MapSet.size()
 		else
 			final(res)
 		end
