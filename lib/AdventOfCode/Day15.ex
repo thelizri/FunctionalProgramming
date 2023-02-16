@@ -15,4 +15,14 @@ defmodule Day15 do
 		transform_row = fn([sX, sY, bX, bY])-> d=abs(bX-sX)+abs(bY-sY); {sX, sY, d} end
 		Enum.map(list, fn(x)-> transform_row.(x) end)
 	end
+
+	def range({sX, sY, d}, y) when abs(y-sY) <= d do
+		n = d - abs(y-sY)
+		case n do
+			0 -> {sX, sX}
+			_ -> {sX-n, sX+n}
+		end
+	end
+
+	def range(_, _) do nil end
 end
