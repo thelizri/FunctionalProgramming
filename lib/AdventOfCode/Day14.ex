@@ -1,9 +1,10 @@
 defmodule Day14 do
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day14.txt")
-		content = String.split(content, "\r\n", trim: true)
+		String.split(content, "\r\n", trim: true)
 		|> Enum.map(fn(row)-> parse_row(row) end)
 		|> Enum.reduce(MapSet.new(), fn(x, acc)-> transform_row(x, acc) end)
+		|> main()
 	end
 
 	def parse_row(row) do
@@ -21,5 +22,9 @@ defmodule Day14 do
 		transform_row([{a,b}|rest], res)
 	end
 	def transform_row(_, map) do map end
+
+	def main(mapset) do
+		MapSet.to_list(mapset)
+	end
 
 end
