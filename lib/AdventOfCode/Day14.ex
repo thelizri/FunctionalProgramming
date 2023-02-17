@@ -25,7 +25,31 @@ defmodule Day14 do
 
 	#We have translated the input to a mapset containing the {x, y} coordinates that are occupied
 	def main(mapset) do
-		MapSet.to_list(mapset)
+		max_y = Enum.map(MapSet.to_list(mapset), fn({x,y}) -> y end) |> Enum.max()
+		size = MapSet.size(mapset)
+		drop_stones(mapset, max_y) - size
 	end
+
+	def drop_stones(mapset, max_y) do
+		result = move(max_y, mapset)
+		case result do
+			:end -> MapSet.size(mapset)
+			_ -> drop_stones(result, max_y)
+		end
+	end
+
+	def move(max_y, mapset, pos \\ {500, 0})
+	def move(max_y, mapset, {x,y}) when y <= max_y do
+		below = {x, y+1}
+		left = {x-1, y+1}
+		right = {x+1, y+1}
+		cond do
+			!MapSet.member?(mapset, below) -> move(max_y, mapset, below)
+			!MapSet.member?(mapset, left) -> move(max_y, mapset, left)
+			!MapSet.member?(mapset, right) -> move(max_y, mapset, right)
+			true -> MapSet.put(mapset, {x, y})
+		end
+	end
+	def move(_, mapset, _) do :end end
 
 end
