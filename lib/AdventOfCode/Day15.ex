@@ -3,17 +3,8 @@ defmodule Day15 do
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
 		list = String.split(content, "\r\n", trim: true) |> parse()
-		list = transform(list) #|> all_ranges() |> final()
-		tt = for num <- 0..20 do
-			{num, all_ranges(list, num) |> final()}
-		end
-		for t <- tt do
-			{row, list} = t
-			case rs = isMember(list, 0..20) do
-				true -> nil
-				_ -> {row, rs}
-			end
-		end |> Enum.filter(fn(x) -> x != nil end)
+
+		transform(list) |> all_ranges() |> final()
 	end
 
 	def parse(list) do
@@ -26,8 +17,8 @@ defmodule Day15 do
 		Enum.map(list, fn(x)-> transform_row.(x) end)
 	end
 
-	def all_ranges(list, num) do
-		Enum.map(list, fn(x)-> range(x, num) end)
+	def all_ranges(list) do
+		Enum.map(list, fn(x)-> range(x, 2000000) end)
 		|> Enum.filter(fn(x)-> x != nil end)
 	end
 
@@ -42,16 +33,15 @@ defmodule Day15 do
 	def range(_, _) do nil end
 
 	def union(a..b, x..y) do
-		cond do
-			b + 1 == x -> a..y
-			y + 1 == a -> x..b  
-			Range.disjoint?(a..b, x..y) -> nil
-			true -> min(a,x)..max(b,y)
+		if Range.disjoint?(a..b, x..y) do
+			nil
+		else
+			min(a,x)..max(b,y)
 		end
 	end
 
-	def combine([], result) do Enum.shuffle(result) end
-	def combine([only], result) do Enum.shuffle([only]++result) end
+	def combine([], result) do result end
+	def combine([only], result) do [only]++result end
 	def combine([first, second|rest], result) do
 		case union(first, second) do
 			nil -> combine(rest, [first, second] ++ result)
@@ -59,33 +49,14 @@ defmodule Day15 do
 		end
 	end
 
-	def final(list, num \\ 0) do
+	def final(list) do
 		res = combine(list, [])
-		if res == list or num > 10 do
-			res
+		if res == list do
+			IO.inspect(res)
+			Enum.concat(res) |> MapSet.new() |> MapSet.size()
 		else
-			final(res, num+1)
+			final(res)
 		end
 	end
-
-	def isMember(list, a..b) do
-		result = Enum.map(a..b, fn(num)->{num, isMember(list, num)} end)
-		|> Enum.filter(fn({num, bool})-> !bool end)
-		case result do
-			[] -> true
-			_ -> result
-		end
-	end
-
-	def isMember(list, num) do
-		Enum.reduce(list, false, fn(x, acc) -> 
-			cond do 
-				Enum.member?(x, num) -> true
-				true -> acc
-			end
-				end )
-	end
-
-	# 0 <= x,y <= 20
 
 end
