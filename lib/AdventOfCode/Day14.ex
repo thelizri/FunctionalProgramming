@@ -23,6 +23,7 @@ defmodule Day14 do
 	end
 	def transform_row(_, map) do map end
 
+	#We have translated the input to a mapset containing the {x, y} coordinates that are occupied
 	def main(mapset) do
 		MapSet.to_list(mapset)
 	end
