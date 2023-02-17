@@ -1,4 +1,4 @@
-defmodule Day15P1 do
+defmodule Day15P2 do
 
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day15Test.txt")
