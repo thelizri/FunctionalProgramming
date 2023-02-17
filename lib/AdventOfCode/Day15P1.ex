@@ -1,7 +1,7 @@
 defmodule Day15P1 do
 
 	def read() do
-		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
+		{:ok, content} = File.read("lib/AdventOfCode/Day15Test.txt")
 		list = String.split(content, "\r\n", trim: true) |> parse()
 		|> transform()
 		findSpot(list) |> IO.inspect
@@ -32,7 +32,7 @@ defmodule Day15P1 do
 	end
 
 	#def findSpot(list) do
-	#	for i <- 0..4000000, j <- 0..4000000 do
+	#	for i <- 0..20, j <- 0..20 do
 	#		bool=checkIfInRangeOfAll?({i,j},list)
 	#		case bool do
 	#			true -> nil
@@ -52,17 +52,17 @@ defmodule Day15P1 do
 		end
 	end
 
-	def increase_counter(i, j) when i <= 4000000 and j <= 4000000 do
+	def increase_counter(i, j) when i <= 20 and j <= 20 do
 		case {i, j} do
-			{4000000, 4000000} -> :end
-			{_, 4000000} -> {i+1, 0}
+			{20, 20} -> :end
+			{_, 20} -> {i+1, 0}
 			{_, _} -> {i, j+1}
 		end 
 	end
 	def increase_counter(_, _) do :end end
 
 	def calcScore({x, y}) do
-		4000000*x + y
+		20*x + y
 	end
 
 	def traverse_outside_range({x,y,d}) do
