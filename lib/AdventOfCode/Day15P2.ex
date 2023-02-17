@@ -62,7 +62,7 @@ defmodule Day15P2 do
 	def increase_counter(_, _) do :end end
 
 	def calcScore({x, y}) do
-		20*x + y
+		4000000*x + y
 	end
 
 	def traverse_outside_range({x,y,d}) do
