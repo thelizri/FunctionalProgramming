@@ -1,10 +1,16 @@
 defmodule Day15 do
 
-	def read() do
-		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
+	def read(file \\ nil) do
+		{_, content} = case file do
+			:test -> File.read("lib/AdventOfCode/Day15Test.txt")
+			_ -> File.read("lib/AdventOfCode/Day15.txt")
+		end
 		list = String.split(content, "\r\n", trim: true) |> parse()
 
-		transform(list) |> all_ranges() |> final()
+		case file do
+			:test -> transform(list) |> all_ranges(10) |> final()
+			_ -> transform(list) |> all_ranges(2000000) |> final()
+		end - 1
 	end
 
 	def parse(list) do
@@ -17,8 +23,8 @@ defmodule Day15 do
 		Enum.map(list, fn(x)-> transform_row.(x) end)
 	end
 
-	def all_ranges(list) do
-		Enum.map(list, fn(x)-> range(x, 2000000) end)
+	def all_ranges(list, num) do
+		Enum.map(list, fn(x)-> range(x, num) end)
 		|> Enum.filter(fn(x)-> x != nil end)
 	end
 
