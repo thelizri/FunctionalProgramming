@@ -65,8 +65,50 @@ defmodule Day15P2 do
 		4000000*x + y
 	end
 
-	def traverse_outside_range({x,y,d}) do
+	def traverse(sensor={x,y,d}) do
+		{pos, dir} = traverse_outside_range(sensor)
+		IO.inspect(pos)
+		traverse(sensor, {pos, dir})
+	end
 
+	def traverse(sensor, {pos, dir}) do
+		response = traverse_outside_range(sensor, dir, pos)
+		case response do
+			:nil -> :ok
+			_ -> {pos, dir} = response; IO.inspect(pos); traverse(sensor, response)
+		end
+	end
+
+	def traverse_outside_range(sensor={x,y,d}) do
+		{{x, y-d}, :upl}
+	end
+
+	def traverse_outside_range(sensor={x,y,d}, :upl, pos={myX, myY}) do
+		cond do
+			y == myY -> traverse_outside_range(sensor, :upr, pos)
+			true -> {{myX-1, myY+1}, :upl}
+		end
+	end
+
+	def traverse_outside_range(sensor={x,y,d}, :upr, pos={myX, myY}) do
+		cond do
+			x == myX -> traverse_outside_range(sensor, :downr, pos)
+			true -> {{myX+1, myY+1}, :upr}
+		end
+	end
+
+	def traverse_outside_range(sensor={x,y,d}, :downr, pos={myX, myY}) do
+		cond do
+			y == myY -> traverse_outside_range(sensor, :downl, pos)
+			true -> {{myX+1, myY-1}, :downr}
+		end
+	end
+
+	def traverse_outside_range(sensor={x,y,d}, :downl, pos={myX, myY}) do
+		cond do
+			x == myX -> nil
+			true -> {{myX-1, myY-1}, :downl}
+		end
 	end
 
 end
