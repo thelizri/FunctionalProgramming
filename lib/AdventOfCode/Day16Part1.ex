@@ -15,7 +15,7 @@ defmodule Day16Part1 do
 		list = String.split(content, "\r\n") |> parse_row([])
 		unvisited = create_unvisited_nodes_list(list)
 		map = create_hash_map(list, Map.new(), 0)
-		execute_program(list, unvisited, map)
+		floyd_warshall(list, unvisited, map)
 	end
 
 	def parse_row([], results) do
@@ -49,11 +49,11 @@ defmodule Day16Part1 do
 	######################################################################################################
 	# Done with parsing data. Time to implement algorithm
 
-	def execute_program(list, unvisited, map) do
+	def floyd_warshall(list, unvisited, map) do
 		matrix = create_matrix(list)
-		matrix = step2(matrix, list, map)
-		matrix = step3(matrix, length(list))
-		execute_final(unvisited, map, matrix)
+		matrix = init_distance_of_all_immediately_adjacent(matrix, list, map)
+		matrix = nested_loop(matrix, length(list))
+		dfs_search(unvisited, map, matrix)
 	end
 
 	def create_matrix(list) do
@@ -62,22 +62,22 @@ defmodule Day16Part1 do
 		Enum.to_list(0..(size-1)) |> Enum.reduce(matrix, fn(x, acc)->Matrix.set(acc, x, x, 0) end)
 	end
 
-	def step2(matrix, list, map) do
-		weights = get_weight_list(list, map, [])
+	def init_distance_of_all_immediately_adjacent(matrix, list, map) do
+		weights = get_adjacent_valves(list, map, [])
 		Enum.reduce(weights, matrix, fn(x, acc)->{row, col}=x; Matrix.set(acc, row, col, 1) end)
 	end
-	def get_weight_list([], _, result) do List.flatten(result) end
-	def get_weight_list([head|rest], map, result) do
+	def get_adjacent_valves([], _, result) do List.flatten(result) end
+	def get_adjacent_valves([head|rest], map, result) do
 		{from, _, to} = head
 		{:ok, from} = Map.fetch(map, from)
 		new = for item <- to do
 			{:ok, tto} = Map.fetch(map, item)
 			{from, tto}
 		end
-		get_weight_list(rest, map, [new|result])
+		get_adjacent_valves(rest, map, [new|result])
 	end
 
-	def step3(matrix, vertices) do
+	def nested_loop(matrix, vertices) do
 		loop( 0, 0, 0, vertices, matrix, :k)
 	end
 	#For step 3. Nested loop
@@ -127,15 +127,15 @@ defmodule Day16Part1 do
 	# Unvisited: {key, valverate}
 	# List: {key, valverate, [to, to, to]}
 
-	def execute_final(unvisited, map, matrix) do
+	def dfs_search(unvisited, map, matrix) do
 		node = "AA"
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		for unvisitedNode <- unvisited do
-			take_a_step(node, unvisitedNode, unvisited, map, matrix, 30, 0)
+			dfs(node, unvisitedNode, unvisited, map, matrix, 30, 0)
 		end |> Enum.max()
 	end
 
-	def take_a_step(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
+	def dfs(current_node, node, unvisited, map, matrix, time, score) when time > 0 do
 		{key, valverate} = node
 		{newscore, time} = add_score(current_node, key, valverate, map, matrix, time, score)
 		cond do
@@ -146,13 +146,13 @@ defmodule Day16Part1 do
 					[] -> newscore
 					_ ->
 						for unvisitedNode <- unvisited do
-							take_a_step(key, unvisitedNode, unvisited, map, matrix, time, newscore)
+							dfs(key, unvisitedNode, unvisited, map, matrix, time, newscore)
 						end |> Enum.max
 				end
 		end
 	end
 
-	def take_a_step(_, _, _, _, _, _, score) do
+	def dfs(_, _, _, _, _, _, score) do
 		score
 	end
 
