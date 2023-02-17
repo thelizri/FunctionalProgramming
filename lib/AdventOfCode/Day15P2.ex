@@ -1,11 +1,15 @@
 defmodule Day15P2 do
 
 	def read() do
-		{:ok, content} = File.read("lib/AdventOfCode/Day15Test.txt")
+		{:ok, content} = File.read("lib/AdventOfCode/Day15.txt")
 		list = String.split(content, "\r\n", trim: true) |> parse()
 		|> transform()
-		findSpot(list) |> IO.inspect
-		|> calcScore
+		for s <- list do
+			traverse(s, list)
+		end |> Enum.filter(fn(x)-> x != :ok end) |> Enum.filter(fn(x)->isInBounds(x) end) |> MapSet.new()
+		|> MapSet.to_list() |> Enum.at(0)
+		#findSpot(list) |> IO.inspect
+		#|> calcScore
 	end
 
 	def parse(list) do
@@ -65,22 +69,28 @@ defmodule Day15P2 do
 		4000000*x + y
 	end
 
-	def traverse(sensor={x,y,d}) do
+	def traverse(sensor={x,y,d}, listOfSensors) do
 		{pos, dir} = traverse_outside_range(sensor)
-		IO.inspect(pos)
-		traverse(sensor, {pos, dir})
+		case checkIfInRangeOfAll?(pos, listOfSensors) do
+			false -> pos
+			_ -> traverse(sensor, {pos, dir}, listOfSensors)
+		end
 	end
 
-	def traverse(sensor, {pos, dir}) do
+	def traverse(sensor, {pos, dir}, listOfSensors) do
 		response = traverse_outside_range(sensor, dir, pos)
 		case response do
 			:nil -> :ok
-			_ -> {pos, dir} = response; IO.inspect(pos); traverse(sensor, response)
+			_ -> {pos, dir} = response; 
+				case checkIfInRangeOfAll?(pos, listOfSensors) do
+					false -> pos
+					_ -> traverse(sensor, {pos, dir}, listOfSensors)
+			end
 		end
 	end
 
 	def traverse_outside_range(sensor={x,y,d}) do
-		{{x, y-d}, :upl}
+		{{x, y-d-1}, :upl}
 	end
 
 	def traverse_outside_range(sensor={x,y,d}, :upl, pos={myX, myY}) do
@@ -108,6 +118,14 @@ defmodule Day15P2 do
 		cond do
 			x == myX -> nil
 			true -> {{myX-1, myY-1}, :downl}
+		end
+	end
+
+	def isInBounds({x,y}) do
+		cond do
+			x > 4000000 or x < 0 -> false
+			y > 4000000 or y < 0 -> false
+			true -> true 
 		end
 	end
 
