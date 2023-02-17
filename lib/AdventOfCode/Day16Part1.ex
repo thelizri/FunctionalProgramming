@@ -70,6 +70,7 @@ defmodule Day16Part1 do
 	def get_adjacent_valves([head|rest], map, result) do
 		{from, _, to} = head
 		{:ok, from} = Map.fetch(map, from)
+		#Fetch row, column index for valve from map
 		new = for item <- to do
 			{:ok, tto} = Map.fetch(map, item)
 			{from, tto}
