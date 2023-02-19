@@ -12,6 +12,7 @@ defmodule Day17P2 do
 		run(0, mapset, blizzards)
 	end
 
+	# Main program
 	def run(round, mapset, blizzards) when round < 2022 do
 		max_y = getTopMost(MapSet.to_list(mapset))
 		rock = getRock(round, max_y)
@@ -24,7 +25,7 @@ defmodule Day17P2 do
 	end
 
 	def move(round, rock, mapset, blizzards) do
-		{direction, blizzards} = getNext(blizzards)
+		{direction, blizzards} = getNextBlizzardDirection(blizzards)
 		newRock = case direction do
 			62 -> move_right(rock)
 			60 -> move_left(rock)
@@ -40,48 +41,40 @@ defmodule Day17P2 do
 		end
 	end
 
-	def getNext({index, list}) do
-		size=tuple_size(list)
-		index = rem(index+1, size)
-		{elem(list, index), {index, list}}
-	end
-
-	def getTopMost(list) do
-		Enum.reduce(list, -1, fn({x,y}, acc)-> max(y, acc) end)
-	end
-
-	def getLeftMost(list) do
-		Enum.reduce(list, 100, fn({x,y}, acc)-> min(x, acc) end)
-	end
-
-	def getRightMost(list) do
-		Enum.reduce(list, -100, fn({x,y}, acc)-> max(x, acc) end)
-	end
-
+	# Movement
 	def move_left(rock) do
 		cond do
 			0 < getLeftMost(rock) -> Enum.map(rock, fn({x,y})->{x-1, y} end)
 			true -> rock
 		end
 	end
-
 	def move_right(rock) do
 		cond do
 			getRightMost(rock) < 6 -> Enum.map(rock, fn({x,y})->{x+1, y} end)
 			true -> rock
 		end
 	end
-
 	def move_down(rock) do
 		Enum.map(rock, fn({x,y})->{x, y-1} end)
 	end
 
-	def isOccupied([], mapset) do false end
-	def isOccupied([pos|rest], mapset) do
-		case MapSet.member?(mapset, pos) do
-			true -> true
-			false -> isOccupied(rest, mapset)
-		end
+	def getTopMost(list) do
+		Enum.reduce(list, -1, fn({x,y}, acc)-> max(y, acc) end)
+	end
+	def getLeftMost(list) do
+		Enum.reduce(list, 100, fn({x,y}, acc)-> min(x, acc) end)
+	end
+	def getRightMost(list) do
+		Enum.reduce(list, -100, fn({x,y}, acc)-> max(x, acc) end)
+	end
+
+	# Other functions
+
+	
+	def getNextBlizzardDirection({index, list}) do
+		size=tuple_size(list)
+		index = rem(index+1, size)
+		{elem(list, index), {index, list}}
 	end
 
 	def getRock(round, max_y) when is_integer(round) do
@@ -93,6 +86,14 @@ defmodule Day17P2 do
 			2 -> [{2, y},{3, y},{4, y},{4, y+1}, {4, y+2}] # Backwards L
 			3 -> [{2, y},{2, y+1},{2, y+2},{2, y+3}] # Column
 			4 -> [{2, y},{3, y},{2, y+1},{3, y+1}] # Square
+		end
+	end
+
+	def isOccupied([], mapset) do false end
+	def isOccupied([pos|rest], mapset) do
+		case MapSet.member?(mapset, pos) do
+			true -> true
+			false -> isOccupied(rest, mapset)
 		end
 	end
 
