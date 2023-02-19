@@ -17,6 +17,7 @@ defmodule Day17P2 do
 		max_y = getTopMost(MapSet.to_list(mapset))
 		rock = getRock(round, max_y)
 		{mapset, blizzards} = move(round, rock, mapset, blizzards)
+		mapset = filterMapSet(mapset)
 		run(round+1, mapset, blizzards)
 	end
 
@@ -70,7 +71,7 @@ defmodule Day17P2 do
 
 	# Other functions
 
-	
+
 	def getNextBlizzardDirection({index, list}) do
 		size=tuple_size(list)
 		index = rem(index+1, size)
@@ -94,6 +95,31 @@ defmodule Day17P2 do
 		case MapSet.member?(mapset, pos) do
 			true -> true
 			false -> isOccupied(rest, mapset)
+		end
+	end
+
+	def filterMapSet(mapset) do
+		bottom = getMaxCompleteRow(mapset)
+		MapSet.to_list(mapset) |> Enum.filter(fn({x, y})-> y >= bottom end) |> MapSet.new()
+	end
+
+	def getMaxCompleteRow(mapset) do
+		max_y = getTopMost(MapSet.to_list(mapset))
+		#Enum.reduce(0..max_y, 0, fn(row, acc)-> case checkIfRowComplete(mapset, row) do 
+		#	true -> max(row, acc); false -> acc; end end)
+		Enum.find(max_y..0, fn(row)-> checkIfRowComplete(mapset, row) end)
+	end
+
+	def checkIfRowComplete(mapset, row) do
+		cond do
+			!MapSet.member?(mapset, {0, row}) -> false
+			!MapSet.member?(mapset, {1, row}) -> false
+			!MapSet.member?(mapset, {2, row}) -> false
+			!MapSet.member?(mapset, {3, row}) -> false
+			!MapSet.member?(mapset, {4, row}) -> false
+			!MapSet.member?(mapset, {5, row}) -> false
+			!MapSet.member?(mapset, {6, row}) -> false
+			true -> true
 		end
 	end
 
