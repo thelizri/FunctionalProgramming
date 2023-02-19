@@ -12,15 +12,14 @@ defmodule Day17 do
 		run_cycle(0, mapset, blizzards)
 	end
 
-	def run_cycle(num, mapset, blizzards) when num < 10 do
+	def run_cycle(num, mapset, blizzards) when num < 2022 do
 		max_y = getTopMost(MapSet.to_list(mapset))
 		rock = getRock(num, max_y)
-		mapset = move(rock, mapset, blizzards)
+		{mapset, blizzards} = move(rock, mapset, blizzards)
 		run_cycle(num+1, mapset, blizzards)
 	end
 
 	def run_cycle(_num, mapset, _blizzards) do
-		IO.inspect(mapset)
 		max_y = getTopMost(MapSet.to_list(mapset))
 	end
 
@@ -82,27 +81,29 @@ defmodule Day17 do
 	def move(rock, mapset, blizzards) do
 		{direction, blizzards} = getNext(blizzards)
 		rock = case direction do
-			62 -> move_right(rock)
-			60 -> move_left(rock)
+			62 -> move_right(rock, mapset)
+			60 -> move_left(rock, mapset)
 		end
-		case move_down(rock, mapset) do
+		case move_down(Enum.map(rock, fn({x,y})->{x, y-1} end), mapset) do
 			true -> rock = Enum.map(rock, fn({x,y})->{x, y-1} end); move(rock, mapset, blizzards)
-			false -> Enum.reduce(rock, mapset, fn(pos, acc)-> MapSet.put(acc, pos) end)
+			false -> {Enum.reduce(rock, mapset, fn(pos, acc)-> MapSet.put(acc, pos) end), blizzards}
 		end
 	end
 
-	def move_right(rock) do
+	def move_right(rock, mapset) do
 		r = getRightMost(rock)
+		rrock = Enum.map(rock, fn({x,y})->{x+1, y} end)
 		cond do
-			r < 6 -> Enum.map(rock, fn({x,y})->{x+1, y} end)
+			r < 6 and !isOccupied(rrock, mapset) -> rrock 
 			true -> rock
 		end
 	end
 
-	def move_left(rock) do
+	def move_left(rock, mapset) do
 		l = getLeftMost(rock)
+		lrock = Enum.map(rock, fn({x,y})->{x-1, y} end)
 		cond do
-			l > 0 -> Enum.map(rock, fn({x,y})->{x-1, y} end)
+			l > 0 and !isOccupied(lrock, mapset) -> lrock
 			true -> rock
 		end
 	end
@@ -112,6 +113,14 @@ defmodule Day17 do
 		cond do
 			MapSet.member?(mapset, pos) -> false
 			true -> move_down(rest, mapset)
+		end
+	end
+
+	def isOccupied([], mapset) do false end
+	def isOccupied([pos|rest], mapset) do
+		case MapSet.member?(mapset, pos) do
+			true -> true
+			false -> isOccupied(rest, mapset)
 		end
 	end
 
