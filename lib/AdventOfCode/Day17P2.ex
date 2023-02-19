@@ -4,6 +4,19 @@
 
 defmodule Day17P2 do
 
+	#Answer = 1569054441243
+	#Delta round = 1745
+	#Height = 2738
+	# Score at round 2754 = 4305
+	# Formula: score = div(trillion-1446, 1745)*2738+4305
+	def calc() do
+		trillion = 1000000000000
+		cycles = div(trillion-1446, 1745) |> IO.inspect
+		not_final_score = cycles*2738 |> IO.inspect
+		second = trillion - 1745*cycles |> IO.inspect # The round we need to check. Equal to 2755. 
+		final_score = not_final_score+4305 |> IO.inspect
+	end
+
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day17.txt")
 		list = String.to_charlist(content) |> List.to_tuple
@@ -13,14 +26,11 @@ defmodule Day17P2 do
 	end
 
 	# Main program
-	def run(round, mapset, blizzards, themax) when round < 1000000 do
+	def run(round, mapset, blizzards, themax) when round < 2755 do
 		max_y = getTopMost(MapSet.to_list(mapset))
 		rock = getRock(round, max_y)
 		{mapset, blizzards, themax} = move(round, rock, mapset, blizzards, themax)
-		mapset = case rem(round, 100) do
-			0 -> filterMapSet(mapset, themax)
-			_ -> mapset
-		end
+		mapset = filterMapSet(mapset, themax, round)
 		run(round+1, mapset, blizzards, themax)
 	end
 
@@ -73,8 +83,6 @@ defmodule Day17P2 do
 	end
 
 	# Other functions
-
-
 	def getNextBlizzardDirection({index, list}) do
 		size=tuple_size(list)
 		index = rem(index+1, size)
@@ -101,8 +109,14 @@ defmodule Day17P2 do
 		end
 	end
 
-	def filterMapSet(mapset, themax) do
+	def filterMapSet(mapset, themax, round) do
 		bottom = getMaxCompleteRow(mapset, themax)
+		height = getTopMost(mapset)
+		prevBottom = Enum.reduce(MapSet.to_list(mapset), nil, fn({x,y}, acc)-> case acc do nil -> y; _ -> min(y, acc); end end)
+		cond do 
+			bottom == prevBottom -> nil
+			true -> IO.puts("New bottom: #{bottom}, Previous bottom: #{prevBottom}. Difference #{abs(bottom-prevBottom)}. Round #{round}. Height #{height}")
+		end
 		MapSet.to_list(mapset) |> Enum.filter(fn({x, y})-> y >= bottom end) |> MapSet.new()
 	end
 
