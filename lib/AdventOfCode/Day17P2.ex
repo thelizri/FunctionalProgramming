@@ -9,23 +9,26 @@ defmodule Day17P2 do
 		list = String.to_charlist(content) |> List.to_tuple
 		blizzards = {-1, list}
 		mapset = MapSet.new([{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{6,0}])
-		run(0, mapset, blizzards)
+		run(0, mapset, blizzards, 0)
 	end
 
 	# Main program
-	def run(round, mapset, blizzards) when round < 2022 do
+	def run(round, mapset, blizzards, themax) when round < 1000000 do
 		max_y = getTopMost(MapSet.to_list(mapset))
 		rock = getRock(round, max_y)
-		{mapset, blizzards} = move(round, rock, mapset, blizzards)
-		mapset = filterMapSet(mapset)
-		run(round+1, mapset, blizzards)
+		{mapset, blizzards, themax} = move(round, rock, mapset, blizzards, themax)
+		mapset = case rem(round, 100) do
+			0 -> filterMapSet(mapset, themax)
+			_ -> mapset
+		end
+		run(round+1, mapset, blizzards, themax)
 	end
 
-	def run(_num, mapset, _blizzards) do
-		max_y = getTopMost(MapSet.to_list(mapset))
+	def run(_num, mapset, _blizzards, themax) do
+		getTopMost(mapset)
 	end
 
-	def move(round, rock, mapset, blizzards) do
+	def move(round, rock, mapset, blizzards, themax) do
 		{direction, blizzards} = getNextBlizzardDirection(blizzards)
 		newRock = case direction do
 			62 -> move_right(rock)
@@ -37,8 +40,8 @@ defmodule Day17P2 do
 		end
 		newRock = move_down(rock)
 		case isOccupied(newRock, mapset) do
-			true -> {Enum.reduce(rock, mapset, fn(pos, acc)-> MapSet.put(acc, pos) end), blizzards}
-			false -> move(round, newRock, mapset, blizzards)
+			true -> {Enum.reduce(rock, mapset, fn(pos, acc)-> MapSet.put(acc, pos) end), blizzards, max(getTopMost(newRock), themax)}
+			false -> move(round, newRock, mapset, blizzards, themax)
 		end
 	end
 
@@ -98,16 +101,13 @@ defmodule Day17P2 do
 		end
 	end
 
-	def filterMapSet(mapset) do
-		bottom = getMaxCompleteRow(mapset)
+	def filterMapSet(mapset, themax) do
+		bottom = getMaxCompleteRow(mapset, themax)
 		MapSet.to_list(mapset) |> Enum.filter(fn({x, y})-> y >= bottom end) |> MapSet.new()
 	end
 
-	def getMaxCompleteRow(mapset) do
-		max_y = getTopMost(MapSet.to_list(mapset))
-		#Enum.reduce(0..max_y, 0, fn(row, acc)-> case checkIfRowComplete(mapset, row) do 
-		#	true -> max(row, acc); false -> acc; end end)
-		Enum.find(max_y..0, fn(row)-> checkIfRowComplete(mapset, row) end)
+	def getMaxCompleteRow(mapset, themax) do
+		Enum.find(themax..0, fn(row)-> checkIfRowComplete(mapset, row) end)
 	end
 
 	def checkIfRowComplete(mapset, row) do
