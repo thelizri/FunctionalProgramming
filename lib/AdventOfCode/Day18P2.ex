@@ -10,26 +10,22 @@ defmodule Day18P2 do
 	def main() do
 		list = read()
 		mapset = MapSet.new(list)
+
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
 		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
-		mapset = floodAll(list, mapset)
+		list = MapSet.to_list(mapset)
+
 		getArea(MapSet.to_list(mapset))
 	end
 
@@ -55,12 +51,12 @@ defmodule Day18P2 do
 	end
 
 	def isInside({x,y,z}, mapset) do
-		right = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z}) end end)
-		left = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z}) end end)
-		front = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y+n,z}) end end)
-		behind = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y-n,z}) end end)
-		top = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z+n}) end end)
-		bottom = Enum.reduce(1..50, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z-n}) end end)
+		right = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z}) end end)
+		left = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z}) end end)
+		front = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y+n,z}) end end)
+		behind = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y-n,z}) end end)
+		top = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z+n}) end end)
+		bottom = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z-n}) end end)
 		case {right, left, front, behind, top, bottom} do
 			{true, true, true, true, true, true} -> true
 			_ -> false
