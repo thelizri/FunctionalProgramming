@@ -64,11 +64,8 @@ defmodule Chopstick do
 
 	#########################################################################################
 	# Interface
-	def request(stick) do
-		send(stick, {:request, self()})
-		receive do
-			:ok -> :ok
-		end
+	def request(stick, from) do
+		send(stick, {:request, from})
 	end
 
 	def return(stick) do
@@ -84,9 +81,10 @@ defmodule Philosopher do
 
 	def start(hunger, left, right, name, ctrl) do
 		spawn_link(fn -> 
-			Enum.each(1..hunger, fn(n)-> sleep(1000); eat(left, right, name) end)
+			Enum.each(1..hunger, fn(n)-> sleep(1000); IO.puts("#{name} wants to eat."); eat(left, right, name) end)
 			send(ctrl, :done)
-			end)
+			IO.puts("#{name} has died from food poisoning.")
+			end)#
 	end
 
 	def sleep(0) do :ok end
@@ -95,14 +93,17 @@ defmodule Philosopher do
 	end
 
 	def eat(left, right, name) do
-		Chopstick.request(left)
+		Chopstick.request(left, self())
 		receive do
 			:ok -> IO.puts("#{name} received left chopstick!")
 		end
-		Chopstick.request(right)
+		Chopstick.request(right, self())
 		receive do
 			:ok -> IO.puts("#{name} received right chopstick!")
 		end
+		IO.puts("#{name} eats a bite")
+		Chopstick.return(left)
+		Chopstick.return(right)
 	end
 end
 
