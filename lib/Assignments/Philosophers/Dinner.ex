@@ -25,8 +25,8 @@ defmodule Dinner do
 		receive do
 			:done -> wait(n - 1, chopsticks)
 			:abort -> IO.puts("Aborting"); Process.exit(self(), :kill)
-		#after
-		#	10_000 -> IO.puts("We seem to have entered a deadlock. Everyone dies."); Process.exit(self(), :kill)
+		after
+			10_000 -> IO.puts("We seem to have entered a deadlock. Everyone dies."); Process.exit(self(), :kill)
 		end
 	end
 end
