@@ -7,8 +7,9 @@
 
 defmodule Philosopher do
 
-	def start(hunger, left, right, name, ctrl) do
+	def start(hunger, left, right, name, ctrl, seed) do
 		spawn_link(fn -> 
+			:rand.seed(:exsss, {seed, seed, seed})
 			Enum.each(1..hunger, fn(n)-> sleep(1000); IO.puts("#{name} wants to eat."); eat(left, right, name) end)
 			send(ctrl, :done)
 			IO.puts("\n\n#{name} has died from food poisoning.\n")
