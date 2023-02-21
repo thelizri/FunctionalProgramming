@@ -57,9 +57,24 @@ defmodule Chopstick do
 	def gone() do
 		receive do
 			:return -> available()
-			{:request, from} -> send(from, :gone); gone()
 			:quit -> :ok
 		end
 	end
 
+	#########################################################################################
+	# Interface
+	def request(stick) do
+		send(stick, {:request, self()})
+		receive do
+			:ok -> :ok
+		end
+	end
+
+	def return(stick) do
+		send(stick, :return)
+	end
+
+	def quit(stick) do
+		send(stick, :quit)
+	end
 end
