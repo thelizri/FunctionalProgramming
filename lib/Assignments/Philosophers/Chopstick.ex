@@ -4,16 +4,16 @@ defmodule Chopstick do
 		stick = spawn_link(fn -> available() end)
 	end
 
-	def available() do
+	defp available() do
 		receive do
-			{:request, from} -> send(from, :ok); gone()
+			{:request, from} -> send(from, :ok); gone(from)
 			:quit -> :ok
 		end
 	end
 
-	def gone() do
+	defp gone(from) do
 		receive do
-			:return -> available()
+			{:return, ^from} -> available()
 			:quit -> :ok
 		end
 	end
@@ -24,8 +24,8 @@ defmodule Chopstick do
 		send(stick, {:request, from})
 	end
 
-	def return(stick) do
-		send(stick, :return)
+	def return(stick, from) do
+		send(stick, {:return, from})
 	end
 
 	def quit(stick) do
