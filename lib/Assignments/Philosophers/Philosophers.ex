@@ -25,6 +25,7 @@ defmodule Philosopher do
 		receive do
 			:ok -> IO.puts("#{name} received left chopstick!")
 		end
+		sleep(300)
 		Chopstick.request(right, self())
 		receive do
 			:ok -> IO.puts("#{name} received right chopstick!")
@@ -33,4 +34,22 @@ defmodule Philosopher do
 		Chopstick.return(left)
 		Chopstick.return(right)
 	end
+
+	def aeat(left, right, name) do
+		Chopstick.request(left, self())
+		Chopstick.request(right, self())
+		granted(2, name)
+		IO.puts("#{name} eats a bite")
+		Chopstick.return(left)
+		Chopstick.return(right)
+	end
+
+	def granted(num, name) when num > 0 do
+		receive do
+			:ok -> IO.puts("#{name} received a chopstick!"); granted(num-1, name)
+		end
+	end
+
+	def granted(_, _) do :ok end
+
 end
