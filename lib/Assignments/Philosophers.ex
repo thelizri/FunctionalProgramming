@@ -35,8 +35,7 @@ defmodule ConPro do
 	def get(pid, key) do
 		send(pid, {:get, key, self()})
 		receive do
-			{key, value} -> IO.inspect(value)
-			something -> IO.inspect(something)
+			{key, value} -> value
 		end
 	end
 
