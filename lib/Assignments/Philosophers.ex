@@ -83,7 +83,7 @@ defmodule Philosopher do
 		spawn_link(fn -> 
 			Enum.each(1..hunger, fn(n)-> sleep(1000); IO.puts("#{name} wants to eat."); eat(left, right, name) end)
 			send(ctrl, :done)
-			IO.puts("#{name} has died from food poisoning.")
+			IO.puts("\n\n#{name} has died from food poisoning.\n")
 			end)#
 	end
 
@@ -127,11 +127,14 @@ defmodule Dinner do
 
 	def wait(0, chopsticks) do
 		Enum.each(chopsticks, fn(c) -> Chopstick.quit(c) end)
+		IO.puts("The Philosophers have finished dining")
 	end
 	def wait(n, chopsticks) do
 		receive do
 			:done -> wait(n - 1, chopsticks)
 			:abort -> Process.exit(self(), :kill)
+		after
+			10_000 -> IO.puts("We seem to have entered a deadlock. Everyone dies."); Process.exit(self(), :kill)
 		end
 	end
 end
