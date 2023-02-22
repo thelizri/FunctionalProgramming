@@ -6,7 +6,7 @@ defmodule Chopstick do
 
 	defp available() do
 		receive do
-			{:request, from} -> send(from, :ok); gone(from)
+			{:request, from} -> send(from, {:ok, self()}); gone(from)
 			:quit -> :ok
 		end
 	end

@@ -60,26 +60,24 @@ defmodule Philosopher do
 	def async_eat(left, right, name, timeout) do
 		Chopstick.request(left, self())
 		Chopstick.request(right, self())
-		case granted(2, timeout) do
-			:timeout ->
+		case granted(2, timeout, []) do
+			{:timeout, own} ->
 				IO.puts("#{name} does not eat a bite")
-				Chopstick.return(left, self())
-				Chopstick.return(right, self())
+				Enum.each(own, fn(pid)->Chopstick.return(pid, self()) end)
 				:timeout
-			:ok ->
+			{:ok, own} ->
 				IO.puts("#{name} eats a bite")
-				Chopstick.return(left, self())
-				Chopstick.return(right, self())
+				Enum.each(own, fn(pid)->Chopstick.return(pid, self()) end)
 				:ok
 		end
 	end
 
-	def granted(0, timeout) do :ok end
-	def granted(n, timeout) do
+	def granted(0, timeout, own) do {:ok, own} end
+	def granted(n, timeout, own) do
 		receive do
-			:ok -> granted(n-1, timeout)
+			{:ok, pid} -> granted(n-1, timeout, [pid]++own)
 		after
-			timeout -> :timeout
+			timeout -> {:timeout, own}
 		end
 	end
 
