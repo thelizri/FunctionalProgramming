@@ -70,10 +70,11 @@ defmodule Philosopher do
 				IO.puts("#{name} eats a bite")
 				Chopstick.return(left, self())
 				Chopstick.return(right, self())
+				:ok
 		end
 	end
 
-	def granted(0, timeout) do 0 end
+	def granted(0, timeout) do :ok end
 	def granted(n, timeout) do
 		receive do
 			:ok -> granted(n-1, timeout)

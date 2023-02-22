@@ -25,11 +25,11 @@ defmodule Dinner do
 		c4 = Chopstick.start()
 		c5 = Chopstick.start()
 		ctrl = self()
-		Philosopher.start(5, c1, c2, "Arendt", ctrl, :rand.uniform(9999999), sleep)
-		Philosopher.start(5, c2, c3, "Hypatia", ctrl, :rand.uniform(9999999), sleep)
-		Philosopher.start(5, c3, c4, "Simone", ctrl, :rand.uniform(9999999), sleep)
-		Philosopher.start(5, c4, c5, "Elisabeth", ctrl, :rand.uniform(9999999), sleep)
-		Philosopher.start(5, c5, c1, "Ayn", ctrl, :rand.uniform(9999999), sleep)
+		Philosopher.async_start(5, c1, c2, "Arendt", ctrl, :rand.uniform(9999999), sleep, sleep)
+		Philosopher.async_start(5, c2, c3, "Hypatia", ctrl, :rand.uniform(9999999), sleep, sleep)
+		Philosopher.async_start(5, c3, c4, "Simone", ctrl, :rand.uniform(9999999), sleep, sleep)
+		Philosopher.async_start(5, c4, c5, "Elisabeth", ctrl, :rand.uniform(9999999), sleep, sleep)
+		Philosopher.async_start(5, c5, c1, "Ayn", ctrl, :rand.uniform(9999999), sleep, sleep)
 		wait(5, [c1, c2, c3, c4, c5], pid)
 	end
 
