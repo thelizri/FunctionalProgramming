@@ -7,10 +7,10 @@
 
 defmodule Philosopher do
 
-	def start(hunger, left, right, name, ctrl, seed) do
+	def start(hunger, left, right, name, ctrl, seed, sleep) do
 		spawn_link(fn -> 
 			:rand.seed(:exsss, {seed, seed, seed})
-			Enum.each(1..hunger, fn(n)-> sleep(1000); IO.puts("#{name} wants to eat."); eat(left, right, name) end)
+			Enum.each(1..hunger, fn(n)-> sleep(sleep); IO.puts("#{name} wants to eat."); eat(left, right, name) end)
 			send(ctrl, :done)
 			IO.puts("\n\n#{name} has finished eating.\n")
 			end)#
@@ -26,6 +26,7 @@ defmodule Philosopher do
 		receive do
 			:ok -> IO.puts("#{name} received left chopstick!")
 		end
+		#:timer.sleep(10)
 		Chopstick.request(right, self())
 		receive do
 			:ok -> IO.puts("#{name} received right chopstick!")
