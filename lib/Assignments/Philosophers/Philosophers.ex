@@ -16,6 +16,29 @@ defmodule Philosopher do
 			end)#
 	end
 
+	def eat(left, right, name) do
+		Chopstick.request(left, self())
+		receive do
+			:ok -> IO.puts("#{name} received left chopstick!")
+		end
+		#:timer.sleep(10)
+		Chopstick.request(right, self())
+		receive do
+			:ok -> IO.puts("#{name} received right chopstick!")
+		end
+		IO.puts("#{name} eats a bite")
+		Chopstick.return(left, self())
+		Chopstick.return(right, self())
+	end
+
+	def sleep(0) do :ok end
+	def sleep(t) do
+		:timer.sleep(:rand.uniform(t))
+	end
+
+	###########################################################################################
+	# Asynchronous
+
 	def async_start(hunger, left, right, name, ctrl, seed, sleep, timeout) do
 		spawn_link(fn -> 
 			:rand.seed(:exsss, {seed, seed, seed})
@@ -32,26 +55,6 @@ defmodule Philosopher do
 			:timeout -> async_run(hunger, left, right, name, sleep, timeout)
 			:ok -> async_run(hunger-1, left, right, name, sleep, timeout)
 		end
-	end
-
-	def sleep(0) do :ok end
-	def sleep(t) do
-		:timer.sleep(:rand.uniform(t))
-	end
-
-	def eat(left, right, name) do
-		Chopstick.request(left, self())
-		receive do
-			:ok -> IO.puts("#{name} received left chopstick!")
-		end
-		#:timer.sleep(10)
-		Chopstick.request(right, self())
-		receive do
-			:ok -> IO.puts("#{name} received right chopstick!")
-		end
-		IO.puts("#{name} eats a bite")
-		Chopstick.return(left, self())
-		Chopstick.return(right, self())
 	end
 
 	def async_eat(left, right, name, timeout) do
@@ -78,5 +81,6 @@ defmodule Philosopher do
 			timeout -> :timeout
 		end
 	end
+
 
 end
