@@ -16,6 +16,24 @@ defmodule Philosopher do
 			end)#
 	end
 
+	def async_start(hunger, left, right, name, ctrl, seed, sleep, timeout) do
+		spawn_link(fn -> 
+			:rand.seed(:exsss, {seed, seed, seed})
+			async_run(hunger, left, right, name, sleep, timeout)
+			send(ctrl, :done)
+			IO.puts("\n\n#{name} has finished eating.\n")
+			end)#
+	end
+
+	def async_run(hunger, left, right, name, sleep, timeout) do
+		sleep(sleep)
+		IO.puts("#{name} wants to eat.")
+		case async_eat(left, right, name, timeout) do
+			:timeout -> async_run(hunger, left, right, name, sleep, timeout)
+			:ok -> async_run(hunger-1, left, right, name, sleep, timeout)
+		end
+	end
+
 	def sleep(0) do :ok end
 	def sleep(t) do
 		:timer.sleep(:rand.uniform(t))
@@ -34,6 +52,31 @@ defmodule Philosopher do
 		IO.puts("#{name} eats a bite")
 		Chopstick.return(left, self())
 		Chopstick.return(right, self())
+	end
+
+	def async_eat(left, right, name, timeout) do
+		Chopstick.request(left, self())
+		Chopstick.request(right, self())
+		case granted(2, timeout) do
+			:timeout ->
+				IO.puts("#{name} does not eat a bite")
+				Chopstick.return(left, self())
+				Chopstick.return(right, self())
+				:timeout
+			:ok ->
+				IO.puts("#{name} eats a bite")
+				Chopstick.return(left, self())
+				Chopstick.return(right, self())
+		end
+	end
+
+	def granted(0, timeout) do 0 end
+	def granted(n, timeout) do
+		receive do
+			:ok -> granted(n-1, timeout)
+		after
+			timeout -> :timeout
+		end
 	end
 
 end
