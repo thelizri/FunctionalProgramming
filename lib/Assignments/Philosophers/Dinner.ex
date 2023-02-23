@@ -1,5 +1,6 @@
 defmodule Dinner do
-	@mytimeout 5_000
+	@mytimeout 20_000
+	@checkdead 4_000
 
 	def test(sleep) do
 		list = Enum.map(101..400, fn(n)-> start(self(), sleep) end)
@@ -13,7 +14,7 @@ defmodule Dinner do
 			:ok -> sum(n+1, list)
 			:deadlock -> sum(n, list)
 		after
-			@mytimeout + 2_000 -> 
+			@checkdead -> 
 				case all_dead(list) do
 					true -> n
 					false -> sum(n, list)

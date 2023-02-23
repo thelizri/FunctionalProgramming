@@ -41,43 +41,46 @@ defmodule Philosopher do
 
 	def async_start(hunger, left, right, name, ctrl, sleep, timeout) do
 		spawn_link(fn -> 
-			async_run(hunger, left, right, name, sleep, timeout)
+			ref = make_ref()
+			async_run(hunger, left, right, name, sleep, timeout, ref)
 			send(ctrl, :done)
 			IO.puts("\n\n#{name} has finished eating.\n")
 			end)#
 	end
 
-	def async_run(0, left, right, name, sleep, timeout) do IO.puts("#{name} has finished eating") end
-	def async_run(hunger, left, right, name, sleep, timeout) do
+	def async_run(0, left, right, name, sleep, timeout, ref) do IO.puts("#{name} has finished eating") end
+	def async_run(hunger, left, right, name, sleep, timeout, ref) do
 		sleep(sleep)
 		IO.puts("#{name} wants to eat.")
-		case async_eat(left, right, name, timeout) do
-			:timeout -> async_run(hunger, left, right, name, sleep, timeout)
-			:ok -> async_run(hunger-1, left, right, name, sleep, timeout)
+		case async_eat(left, right, name, timeout, ref) do
+			:timeout -> async_run(hunger, left, right, name, sleep, timeout, make_ref())
+			:ok -> async_run(hunger-1, left, right, name, sleep, timeout, ref)
 		end
 	end
 
-	def async_eat(left, right, name, timeout) do
-		Chopstick.request(left, self())
-		Chopstick.request(right, self())
-		case granted(2, timeout, []) do
-			{:timeout, own} ->
+	def async_eat(left, right, name, timeout, ref) do
+		Chopstick.request(left, self(), ref)
+		Chopstick.request(right, self(), ref)
+		case granted(2, timeout, ref) do
+			:timeout ->
 				IO.puts("#{name} does not eat a bite")
-				Enum.each(own, fn(pid)->Chopstick.return(pid, self()) end)
+				Chopstick.return(left, ref)
+				Chopstick.return(right, ref)
 				:timeout
-			{:ok, own} ->
+			:ok ->
 				IO.puts("#{name} eats a bite")
-				Enum.each(own, fn(pid)->Chopstick.return(pid, self()) end)
+				Chopstick.return(left, ref)
+				Chopstick.return(right, ref)
 				:ok
 		end
 	end
 
-	def granted(0, timeout, own) do {:ok, own} end
-	def granted(n, timeout, own) do
+	def granted(0, timeout, ref) do :ok end
+	def granted(n, timeout, ref) do
 		receive do
-			{:ok, pid} -> granted(n-1, timeout, [pid]++own)
+			{:ok, ^ref} -> granted(n-1, timeout, ref)
 		after
-			timeout -> {:timeout, own}
+			timeout -> :timeout
 		end
 	end
 

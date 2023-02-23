@@ -6,7 +6,7 @@ defmodule Chopstick do
 
 	defp available() do
 		receive do
-			{:request, ref} -> send(from, {:ok, ref}); gone(ref)
+			{:request, from, ref} -> send(from, {:ok, ref}); gone(ref)
 			:quit -> :ok
 		end
 	end
@@ -21,8 +21,8 @@ defmodule Chopstick do
 	#########################################################################################
 	# Interface
 	# Add unique identifier to message make_ref()
-	def request(stick, ref) do
-		send(stick, {:request, ref})
+	def request(stick, from, ref) do
+		send(stick, {:request, from, ref})
 	end
 
 	def return(stick, ref) do
