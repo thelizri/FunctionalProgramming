@@ -1,4 +1,5 @@
 defmodule Dinner do
+	@mytimeout 20_000
 
 	def test(sleep) do
 		Enum.each(101..400, fn(n)-> start(n, self(), sleep) end)
@@ -12,7 +13,7 @@ defmodule Dinner do
 			:ok -> sum(n+1)
 			:deadlock -> sum(n)
 		after
-			60_000 -> n
+			2*@mytimeout+10_000 -> n
 		end
 	end
 
@@ -43,7 +44,7 @@ defmodule Dinner do
 			:done -> wait(n - 1, chopsticks, pid)
 			:abort -> IO.puts("Aborting"); Process.exit(self(), :kill)
 		after
-			30_000 -> IO.puts("We seem to have entered a deadlock. Everyone dies."); Process.exit(self(), :kill)
+			@mytimeout -> IO.puts("We seem to have entered a deadlock. Everyone dies."); Process.exit(self(), :kill)
 			send(pid, :deadlock)
 		end
 	end
