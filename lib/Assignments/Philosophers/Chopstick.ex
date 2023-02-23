@@ -20,6 +20,7 @@ defmodule Chopstick do
 
 	#########################################################################################
 	# Interface
+	# Add unique identifier to message
 	def request(stick, from) do
 		send(stick, {:request, from})
 	end
