@@ -1,21 +1,36 @@
 defmodule Dinner do
-	@mytimeout 20_000
+	@mytimeout 5_000
 
 	def test(sleep) do
-		Enum.each(101..400, fn(n)-> start(self(), sleep) end)
-		num = sum(0)
+		list = Enum.map(101..400, fn(n)-> start(self(), sleep) end)
+		num = sum(0, list)
 		iterations = 300
 		IO.puts("Successful iterations: #{num}. Total iterations: #{iterations}. Ratio: #{num/iterations}")
 	end
 
-	def sum(n) do
+	def sum(n, list) do
 		receive do
-			:ok -> sum(n+1)
-			:deadlock -> sum(n)
+			:ok -> sum(n+1, list)
+			:deadlock -> sum(n, list)
 		after
-			2*@mytimeout+10_000 -> n
+			@mytimeout + 2_000 -> 
+				case all_dead(list) do
+					true -> n
+					false -> sum(n, list)
+				end
 		end
 	end
+
+	def all_dead([]) do true end
+	def all_dead([head|rest]) do
+		case Process.alive?(head) do
+			true -> false
+			false -> all_dead(rest)
+		end
+	end
+
+	###########################################################################################################
+	# Code 
 
 	def start(pid, sleep) do spawn(fn -> init(pid, sleep) end) end
 	def init(pid, sleep) do
