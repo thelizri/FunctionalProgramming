@@ -19,16 +19,19 @@ defmodule Day18P2 do
 		[head|rest] = queue 
 
 		#Calculate score
-		score = cond do
+		tempscore = cond do
 			MapSet.member?(mapset, head) and !MapSet.member?(visited, head) ->
-				score + getScore(head, list)
-			true -> score
+				getScore(head, list)
+			true -> 0
 		end
+		score = score + tempscore
 
+		
 		#Get neighboring nodes
 		neighbours = cond do
-			MapSet.member?(mapset, head) -> []
-			true -> getNeighbors(head, visited)
+			MapSet.member?(mapset, head) and tempscore==0 -> []
+			tempscore == 0 -> getNeighbors(head, visited)
+			true -> []
 		end
 
 		#Add head to visited
@@ -60,7 +63,7 @@ defmodule Day18P2 do
 
 	def getNeighbors({x,y,z}, visited) do
 		neighbours = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
-		Enum.filter(neighbours, fn({x,y,z})-> x<=21 and x>=0 and y<=21 and y>=0 and z<=21 and z>=0 end)
+		Enum.filter(neighbours, fn({x,y,z})-> x<=6 and x>=0 and y<=6 and y>=0 and z<=6 and z>=0 end)
 		|> Enum.filter(fn({x,y,z})-> !MapSet.member?(visited, {x,y,z}) end)
 	end
 
