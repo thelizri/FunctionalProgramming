@@ -1,11 +1,19 @@
 defmodule Dinner do
-	@mytimeout 20_000
+	###########################################################################################################
+	# Benchmark
+
+
+
+	###########################################################################################################
+	# Test
+
+	@mytimeout 60_000
 	@checkdead 4_000
 
 	def test(sleep) do
-		list = Enum.map(101..400, fn(n)-> start(self(), sleep) end)
+		list = Enum.map(1..1000, fn(n)-> start(self(), sleep) end)
 		num = sum(0, list)
-		iterations = 300
+		iterations = 1000
 		IO.puts("Successful iterations: #{num}. Total iterations: #{iterations}. Ratio: #{num/iterations}")
 	end
 
