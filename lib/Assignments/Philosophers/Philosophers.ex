@@ -50,7 +50,7 @@ defmodule Philosopher do
 		sleep(sleep)
 		IO.puts("#{name} wants to eat.")
 		case async_eat(left, right, name, timeout) do
-			:timeout -> :timer.sleep(sleep); async_run(hunger, left, right, name, sleep, timeout)
+			:timeout -> async_run(hunger, left, right, name, sleep, timeout)
 			:ok -> async_run(hunger-1, left, right, name, sleep, timeout)
 		end
 	end
