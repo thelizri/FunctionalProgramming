@@ -58,6 +58,7 @@ defmodule Day18P2 do
 		end
 	end
 
+	#This function is wrong. Need to change this function. 
 	def getScore(coord, list) do
 		Enum.reduce(list, 6, fn(x, acc)-> acc + isNeighbor(coord, x) end)
 	end
