@@ -1,5 +1,7 @@
 #Flood fill algorithm
 defmodule Day18P2 do
+	@mymaxbound 6
+	@myminbound 1
 
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day16-20/Day18.txt")
@@ -10,7 +12,7 @@ defmodule Day18P2 do
 	def main() do
 		list = read()
 		mapset = MapSet.new(list)
-		queue = [{0,0,0}]
+		queue = [{@myminbound,@myminbound,@myminbound}]
 		run(list, mapset, queue, MapSet.new(), 0)
 	end
 
@@ -29,8 +31,7 @@ defmodule Day18P2 do
 		
 		#Get neighboring nodes
 		neighbours = cond do
-			MapSet.member?(mapset, head) and tempscore==0 -> []
-			tempscore == 0 -> getNeighbors(head, visited)
+			tempscore == 0 and !MapSet.member?(mapset, head) -> getNeighbors(head, visited)
 			true -> []
 		end
 
@@ -38,7 +39,7 @@ defmodule Day18P2 do
 		visited = MapSet.put(visited, head)
 
 		#Add neigbors to queue
-		queue = Enum.filter(queue++neighbours, fn(x)-> !MapSet.member?(visited, x) end)
+		queue = Enum.filter(rest++neighbours, fn(x)-> !MapSet.member?(visited, x) end)
 
 		#Run function again
 		run(list, mapset, queue, visited, score)
@@ -63,7 +64,8 @@ defmodule Day18P2 do
 
 	def getNeighbors({x,y,z}, visited) do
 		neighbours = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
-		Enum.filter(neighbours, fn({x,y,z})-> x<=6 and x>=0 and y<=6 and y>=0 and z<=6 and z>=0 end)
+		Enum.filter(neighbours, fn({x,y,z})-> x<=@mymaxbound and x>=@myminbound 
+			and y<=@mymaxbound and y>=@myminbound and z<=@mymaxbound and z>=@myminbound end)
 		|> Enum.filter(fn({x,y,z})-> !MapSet.member?(visited, {x,y,z}) end)
 	end
 
