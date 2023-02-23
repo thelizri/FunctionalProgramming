@@ -2,7 +2,7 @@ defmodule Dinner do
 	@mytimeout 20_000
 
 	def test(sleep) do
-		Enum.each(101..400, fn(n)-> start(n, self(), sleep) end)
+		Enum.each(101..400, fn(n)-> start(self(), sleep) end)
 		num = sum(0)
 		iterations = 300
 		IO.puts("Successful iterations: #{num}. Total iterations: #{iterations}. Ratio: #{num/iterations}")
@@ -17,20 +17,19 @@ defmodule Dinner do
 		end
 	end
 
-	def start(seed, pid, sleep) do spawn(fn -> init(seed, pid, sleep) end) end
-	def init(seed, pid, sleep) do
-		:rand.seed(:exsss, {seed, seed, seed})
+	def start(pid, sleep) do spawn(fn -> init(pid, sleep) end) end
+	def init(pid, sleep) do
 		c1 = Chopstick.start()
 		c2 = Chopstick.start()
 		c3 = Chopstick.start()
 		c4 = Chopstick.start()
 		c5 = Chopstick.start()
 		ctrl = self()
-		Philosopher.async_start(5, c1, c2, "Arendt", ctrl, :rand.uniform(9999999), sleep, sleep)
-		Philosopher.async_start(5, c2, c3, "Hypatia", ctrl, :rand.uniform(9999999), sleep, sleep)
-		Philosopher.async_start(5, c3, c4, "Simone", ctrl, :rand.uniform(9999999), sleep, sleep)
-		Philosopher.async_start(5, c4, c5, "Elisabeth", ctrl, :rand.uniform(9999999), sleep, sleep)
-		Philosopher.async_start(5, c5, c1, "Ayn", ctrl, :rand.uniform(9999999), sleep, sleep)
+		Philosopher.async_start(5, c1, c2, "Arendt", ctrl, sleep, sleep)
+		Philosopher.async_start(5, c2, c3, "Hypatia", ctrl, sleep, sleep)
+		Philosopher.async_start(5, c3, c4, "Simone", ctrl, sleep, sleep)
+		Philosopher.async_start(5, c4, c5, "Elisabeth", ctrl, sleep, sleep)
+		Philosopher.async_start(5, c5, c1, "Ayn", ctrl, sleep, sleep)
 		wait(5, [c1, c2, c3, c4, c5], pid)
 	end
 
