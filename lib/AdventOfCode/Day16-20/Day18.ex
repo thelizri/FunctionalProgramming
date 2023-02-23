@@ -1,7 +1,7 @@
 defmodule Day18 do
 
 	def read() do
-		{:ok, content} = File.read("lib/AdventOfCode/Day18.txt")
+		{:ok, content} = File.read("lib/AdventOfCode/Day16-20/Day18.txt")
 		String.split(content, "\r\n")
 		|> Enum.map(fn(x)-> [a, b, c] = String.split(x, ",", trim: true); {String.to_integer(a), String.to_integer(b), String.to_integer(c)} end)
 	end

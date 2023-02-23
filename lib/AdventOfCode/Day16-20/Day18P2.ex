@@ -2,7 +2,7 @@
 defmodule Day18P2 do
 
 	def read() do
-		{:ok, content} = File.read("lib/AdventOfCode/Day18.txt")
+		{:ok, content} = File.read("lib/AdventOfCode/Day16-20/Day18.txt")
 		String.split(content, "\r\n")
 		|> Enum.map(fn(x)-> [a, b, c] = String.split(x, ",", trim: true); {String.to_integer(a), String.to_integer(b), String.to_integer(c)} end)
 	end
@@ -10,23 +10,35 @@ defmodule Day18P2 do
 	def main() do
 		list = read()
 		mapset = MapSet.new(list)
+		queue = [{0,0,0}]
+		run(list, mapset, queue, MapSet.new(), 0)
+	end
 
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
-		mapset = floodAll(list, mapset)
-		list = MapSet.to_list(mapset)
+	def run(list, mapset, [], visited, score) do score end
+	def run(list, mapset, queue, visited, score) do
+		[head|rest] = queue 
 
-		getArea(MapSet.to_list(mapset))
+		#Calculate score
+		score = cond do
+			MapSet.member?(mapset, head) and !MapSet.member?(visited, head) ->
+				score + getScore(head, list)
+			true -> score
+		end
+
+		#Get neighboring nodes
+		neighbours = cond do
+			MapSet.member?(mapset, head) -> []
+			true -> getNeighbors(head, visited)
+		end
+
+		#Add head to visited
+		visited = MapSet.put(visited, head)
+
+		#Add neigbors to queue
+		queue = Enum.filter(queue++neighbours, fn(x)-> !MapSet.member?(visited, x) end)
+
+		#Run function again
+		run(list, mapset, queue, visited, score)
 	end
 
 	#Returns -1 if neighbor. Otherwise returns 0
@@ -42,43 +54,30 @@ defmodule Day18P2 do
 		end
 	end
 
-	def getArea(list) do 
-		Enum.reduce(list, 0, fn(x, acc)-> acc+getScore(x, list)end)
-	end
-
 	def getScore(coord, list) do
 		Enum.reduce(list, 6, fn(x, acc)-> acc + isNeighbor(coord, x) end)
 	end
 
-	def isInside({x,y,z}, mapset) do
-		right = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z}) end end)
-		left = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z}) end end)
-		front = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y+n,z}) end end)
-		behind = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x,y-n,z}) end end)
-		top = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x+n,y,z+n}) end end)
-		bottom = Enum.reduce(1..10, false, fn(n, acc)-> case acc do true -> true; false -> MapSet.member?(mapset, {x-n,y,z-n}) end end)
-		case {right, left, front, behind, top, bottom} do
-			{true, true, true, true, true, true} -> true
-			_ -> false
-		end
+	def getNeighbors({x,y,z}, visited) do
+		neighbours = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
+		Enum.filter(neighbours, fn({x,y,z})-> x<=21 and x>=0 and y<=21 and y>=0 and z<=21 and z>=0 end)
+		|> Enum.filter(fn({x,y,z})-> !MapSet.member?(visited, {x,y,z}) end)
 	end
 
-	def floodFill({x,y,z}, mapset) do
-		cond do
-			isInside({x,y,z}, mapset) -> MapSet.put(mapset, {x,y,z})
-			true -> mapset
-		end
-	end
 
-	def floodAll([], mapset) do mapset end
-	def floodAll([rock|rest], mapset) do
-		adj = getAdj(rock)
-		mapset = Enum.reduce(adj, mapset, fn(rrock, acc)->case MapSet.member?(mapset, rrock) do true -> acc; false -> floodFill(rrock, acc) end end)
-		floodAll(rest, mapset)
-	end
-
-	def getAdj({x,y,z}) do
-		[{x+1,y,z}, {x-1,y,z}, {x,y+1,z}, {x,y-1,z}, {x,y,z+1}, {x,y,z-1}]
-	end
+	#BFS (G, s)                   //Where G is the graph and s is the source node
+    #  let Q be queue.
+    #  Q.enqueue( s ) //Inserting s in queue until all its neighbour vertices are marked.
+	#
+    #  mark s as visited.
+    #  while ( Q is not empty)
+    #       //Removing that vertex from queue,whose neighbour will be visited now
+    #       v  =  Q.dequeue( )
+	#
+    #      //processing all the neighbours of v  
+    #      for all neighbours w of v in Graph G
+    #           if w is not visited 
+    #                    Q.enqueue( w )             //Stores w in Q to further visit its neighbour
+    #                    mark w as visited.
 
 end
