@@ -37,6 +37,7 @@ defmodule Philosopher do
 	###########################################################################################
 	# Asynchronous
 	# Add patience variable
+	# We need to keep track of references make_ref()
 
 	def async_start(hunger, left, right, name, ctrl, sleep, timeout) do
 		spawn_link(fn -> 
