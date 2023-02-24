@@ -23,7 +23,7 @@ defmodule Day18P2 do
 		#Calculate score
 		tempscore = cond do
 			MapSet.member?(mapset, head) and !MapSet.member?(visited, head) ->
-				getScore(head, list)
+				getScore(head, mapset)
 			true -> 0
 		end
 		score = score + tempscore
@@ -45,22 +45,11 @@ defmodule Day18P2 do
 		run(list, mapset, queue, visited, score)
 	end
 
-	#Returns -1 if neighbor. Otherwise returns 0
-	def isNeighbor({x,y,z}, other) do
-		case1 = {x+1,y,z}; case2 = {x-1,y,z}
-		case3 = {x,y+1,z}; case4 = {x,y-1,z}
-		case5 = {x,y,z+1}; case6 = {x,y,z-1}
-		case other do
-			^case1 -> -1; ^case2 -> -1
-			^case3 -> -1; ^case4 -> -1
-			^case5 -> -1; ^case6 -> -1
-			_ -> 0
-		end
-	end
-
 	#This function is wrong. Need to change this function. 
-	def getScore(coord, list) do
-		Enum.reduce(list, 6, fn(x, acc)-> acc + isNeighbor(coord, x) end)
+	def getScore({x,y,z}, mapset) do
+		neighbours = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
+		Enum.reduce(neighbours, 6, fn(x, acc)-> case MapSet.member?(mapset, x) do
+			true -> acc-1; false -> acc; end end)
 	end
 
 	def getNeighbors({x,y,z}, visited) do
