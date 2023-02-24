@@ -12,14 +12,11 @@ defmodule Day18P2 do
 	def main() do
 		list = read()
 		mapset = MapSet.new(list)
-		queue = [{@myminbound,@myminbound,@myminbound}]
-		run(list, mapset, queue, MapSet.new(), 0)
+		run(list, mapset, MapSet.new(), 0)
 	end
 
-	def run(list, mapset, [], visited, score) do score end
-	def run(list, mapset, queue, visited, score) do
-		[head|rest] = queue 
-
+	def run([], mapset, visited, score) do score end
+	def run([head|rest], mapset, visited, score) do
 		#Calculate score
 		tempscore = cond do
 			MapSet.member?(mapset, head) and !MapSet.member?(visited, head) ->
@@ -28,21 +25,11 @@ defmodule Day18P2 do
 		end
 		score = score + tempscore
 
-		
-		#Get neighboring nodes
-		neighbours = cond do
-			!MapSet.member?(visited, head) -> getNeighbors(head, visited)
-			true -> []
-		end
-
 		#Add head to visited
 		visited = MapSet.put(visited, head)
 
-		#Add neigbors to queue
-		queue = Enum.filter(rest++neighbours, fn(x)-> !MapSet.member?(visited, x) end)
-
 		#Run function again
-		run(list, mapset, queue, visited, score)
+		run(rest, mapset, visited, score)
 	end
 
 	#This function is wrong. Need to change this function. 
