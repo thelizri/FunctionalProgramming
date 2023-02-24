@@ -7,7 +7,8 @@ defmodule Day19 do
 		|> List.flatten()
 	end
 
-	def parse([a, b, c, d, e|rest]) do
+	def parse([], result) do result end
+	def parse([a, b, c, d, e|rest], result) do
 		map = Map.new()
 
 		[[num]] = Regex.scan(~r/\d+/, a)
@@ -31,10 +32,11 @@ defmodule Day19 do
 		ore = String.to_integer(ore)
 		obsidian = String.to_integer(obsidian)
 		map = Map.put(map, :geodeRobot, [ore: ore, obsidian: obsidian])
+		parse(rest, Map.put(result, blueprint_id, map))
 	end
 
 	def main() do
-		read() |> parse()
+		read() |> parse(Map.new())
 	end
 
 end
