@@ -53,12 +53,19 @@ defmodule Day18P2V2 do
     	check(list, mapset, visited)
     end
 
-    def check([], mapset, visited) do false end
+    def check([], mapset, visited) do visited end
     def check([head|rest], mapset, visited) do
-    	case Enum.any?([dfs(head, mapset, visited)]) do
+    	res = [dfs(head, mapset, visited)]
+    	case Enum.any?(res) do
     		true -> true
-    		false -> check(rest, mapset, visited)
+    		false -> check(rest, mapset, findUnion(List.flatten(res), visited))
     	end
+    end
+
+    def findUnion([], visited) do visited end
+    def findUnion([head|rest], visited) do
+    	visited = MapSet.union(head, visited)
+    	findUnion(rest, visited)
     end
 
 end

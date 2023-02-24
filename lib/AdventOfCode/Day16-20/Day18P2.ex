@@ -28,17 +28,41 @@ defmodule Day18P2 do
     def dfs({x,y,z}, mapset, visited) when y > @mymaxbound or y < @myminbound do true end
     def dfs({x,y,z}, mapset, visited) when z > @mymaxbound or z < @myminbound do true end
 
+    #Return all visited nodes
     def dfs(coord={x,y,z}, mapset, visited) do
     	cond do
-    		MapSet.member?(visited, coord) -> false
-    		MapSet.member?(mapset, coord) -> false
+    		MapSet.member?(visited, coord) -> visited
+    		MapSet.member?(mapset, coord) -> visited
     		true ->
     		visited = MapSet.put(visited, coord)
     		neighbors = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
     		|> Enum.filter(fn(pos)-> !MapSet.member?(mapset, pos) and !MapSet.member?(visited, pos) end)
-    		|> Enum.map(fn(pos)-> dfs(pos, mapset, visited) end)
-    		|> Enum.any?()
+    		check(neighbors, mapset, visited)
     	end
+    end
+
+    def check([], mapset, visited) do visited end
+    def check([head|rest], mapset, visited) do
+    	result = dfs(head, mapset, visited) 
+    	|> evalReturn()
+    	case result do
+    		true -> true
+    		unions -> check(rest, mapset, MapSet.union(visited, unions))
+    	end 
+    end
+
+    def evalReturn(true) do true end
+    def evalReturn(list) do
+    	case Enum.any?(list) do
+    		true -> true
+    		false -> findUnion(List.flatten(list), MapSet.new())
+    	end
+    end
+
+    def findUnion([], visited) do visited end
+    def findUnion([head|rest], visited) do
+    	visited = MapSet.union(head, visited)
+    	findUnion(rest, visited)
     end
 
 end
