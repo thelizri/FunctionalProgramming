@@ -31,7 +31,7 @@ defmodule Day18P2 do
 		
 		#Get neighboring nodes
 		neighbours = cond do
-			tempscore == 0 and !MapSet.member?(mapset, head) -> getNeighbors(head, visited)
+			!MapSet.member?(visited, head) -> getNeighbors(head, visited)
 			true -> []
 		end
 
@@ -47,9 +47,10 @@ defmodule Day18P2 do
 
 	#This function is wrong. Need to change this function. 
 	def getScore({x,y,z}, mapset) do
-		neighbours = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
-		Enum.reduce(neighbours, 6, fn(x, acc)-> case MapSet.member?(mapset, x) do
-			true -> acc-1; false -> acc; end end)
+		[{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}] |>
+		Enum.filter(fn(x)-> MapSet.member?(mapset, x) end) |> 
+		Enum.map(fn(coord)-> dfs(coord, mapset, MapSet.new([coord])) end) |> List.flatten() 
+		|> Enum.count(fn(x)-> x end)
 	end
 
 	def getNeighbors({x,y,z}, visited) do
@@ -74,5 +75,25 @@ defmodule Day18P2 do
     #           if w is not visited 
     #                    Q.enqueue( w )             //Stores w in Q to further visit its neighbour
     #                    mark w as visited.
+
+    #We will use depth first search to calculate the score
+    def dfs({x,y,z}, mapset, visited) when x > @mymaxbound or x < @myminbound do true end
+    def dfs({x,y,z}, mapset, visited) when y > @mymaxbound or y < @myminbound do true end
+    def dfs({x,y,z}, mapset, visited) when z > @mymaxbound or z < @myminbound do true end
+
+    def dfs({x,y,z}, mapset, visited) do
+    	list = [{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
+    	|> Enum.filter(fn(x)-> !MapSet.member?(mapset, x) and !MapSet.member?(visited, x) end)
+    	visited = Enum.reduce(list, visited, fn(x, acc)-> MapSet.put(acc, x) end)
+    	check(list, mapset, visited)
+    end
+
+    def check([], mapset, visited) do false end
+    def check([head|rest], mapset, visited) do
+    	case Enum.any?([dfs(head, mapset, visited)]) do
+    		true -> true
+    		false -> check(rest, mapset, visited)
+    	end
+    end
 
 end
