@@ -1,7 +1,7 @@
 #Flood fill algorithm
 defmodule Day18P2 do
-	@mymaxbound 6
-	@myminbound 1
+	@mymaxbound 21
+	@myminbound 0
 
 	def read() do
 		{:ok, content} = File.read("lib/AdventOfCode/Day16-20/Day18.txt")
@@ -34,9 +34,10 @@ defmodule Day18P2 do
 
 	#This function is wrong. Need to change this function. 
 	def getScore({x,y,z}, mapset) do
-		[{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}] |>
-		Enum.filter(fn(x)-> MapSet.member?(mapset, x) end) |> 
-		Enum.map(fn(coord)-> dfs(coord, mapset, MapSet.new([coord])) end) |> List.flatten() 
+		[{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
+		|> Enum.filter(fn(x)-> !MapSet.member?(mapset, x) end)
+		|> Enum.map(fn(coord)-> dfs(coord, mapset, MapSet.new()) end) 
+		|> List.flatten()
 		|> Enum.count(fn(x)-> x end)
 	end
 

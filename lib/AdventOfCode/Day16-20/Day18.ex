@@ -7,25 +7,15 @@ defmodule Day18 do
 	end
 
 	def main() do
-		list = read()
-		Enum.reduce(list, 0, fn(x, acc)-> acc+getScore(x, list) end)
+		list = read() 
+		mapset = MapSet.new(list)
+		Enum.reduce(list, 0, fn(x, acc)-> acc+getScore(x, mapset) end)
 	end
 
-	#Returns -1 if neighbor. Otherwise returns 0
-	def isNeighbor({x,y,z}, other) do
-		case1 = {x+1,y,z}; case2 = {x-1,y,z}
-		case3 = {x,y+1,z}; case4 = {x,y-1,z}
-		case5 = {x,y,z+1}; case6 = {x,y,z-1}
-		case other do
-			^case1 -> -1; ^case2 -> -1
-			^case3 -> -1; ^case4 -> -1
-			^case5 -> -1; ^case6 -> -1
-			_ -> 0
-		end
-	end
-
-	def getScore(coord, list) do
-		Enum.reduce(list, 6, fn(x, acc)-> acc + isNeighbor(coord, x) end)
+	def getScore({x,y,z}, mapset) do
+		[{x+1,y,z}, {x,y+1,z}, {x,y,z+1}, {x-1,y,z}, {x,y-1,z}, {x,y,z-1}]
+		|> Enum.filter(fn(coord)-> !MapSet.member?(mapset, coord) end)
+		|> Enum.count()
 	end
 
 
