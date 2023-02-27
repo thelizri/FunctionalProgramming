@@ -49,4 +49,13 @@ defmodule Train do
 		{left, right} = split(rest, wagon)
 		{[head|left], right}
 	end
+
+	# Return a tuple with {k, remain, take}
+	def main([], n) do {n, [], []} end
+	def main([head|rest], n) do
+		case main(rest, n) do
+			{0, remain, take} -> {0, [head|remain], take}
+			{n, remain, take} -> {n-1, remain, [head|take]}
+		end
+	end
 end
