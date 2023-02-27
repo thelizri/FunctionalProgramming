@@ -16,7 +16,7 @@ defmodule Train do
 
 	# Returns the train that is the combinations of the two trains
 	# Appends right argument, to the end of left argument
-	def append([], [train]) do [train] end
+	def append([], [train|rest]) do [train|rest] end
 	def append([], wagon) do [wagon] end
 	def append([wagon|rest], train) do
 		[wagon|append(rest, train)]
