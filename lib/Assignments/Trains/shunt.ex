@@ -10,4 +10,14 @@ defmodule Shunt do
 		[{:one, aheadL+1}, {:two, behindL}, {:one, -(aheadL+1)}, {:two, -behindL} | find(Train.append(ahead, behind), rest)]
 	end
 
+	#Redundant
+	def compress([{_, 0}|rest]) do
+		compress(rest)
+	end
+	def compress([{same, n}, {same, m}|rest]) do
+		compress([{same, n+m}|rest])
+	end
+	def compress([]) do [] end
+	def compress([head|rest]) do [head|compress(rest)] end
+
 end
