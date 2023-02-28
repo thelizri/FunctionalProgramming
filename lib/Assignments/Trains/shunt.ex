@@ -1,7 +1,6 @@
 defmodule Shunt do
 
 	def find([], []) do [] end
-	def find([[]], []) do [] end
 	def find(state, state) do [] end
 	def find([head|fRest], [head|tRest]) do find(fRest, tRest) end
 	def find(fromState, [head|rest]) do 
