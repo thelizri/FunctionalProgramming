@@ -48,4 +48,10 @@ defmodule Moves do
 		sequence(rest, state, result)
 	end
 
+	# sequence on main
+	def main(moves, state) do
+		{state, _, _} = sequence(moves, {state, [], []}) |> List.last()
+		state
+	end
+
 end
