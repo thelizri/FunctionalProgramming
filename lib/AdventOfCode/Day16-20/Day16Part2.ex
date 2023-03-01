@@ -9,13 +9,13 @@ defmodule Day16Part2 do
 
 	def read(file \\ nil) do
 		{_, content} = case file do
-			:test -> File.read("lib/AdventOfCode/Day16Test.txt")
-			_ -> File.read("lib/AdventOfCode/Day16.txt")
+			:test -> File.read("lib/AdventOfCode/Day16-20/Day16Test.txt")
+			_ -> File.read("lib/AdventOfCode/Day16-20/Day16.txt")
 		end
 		list = String.split(content, "\r\n") |> parse_row([])
 		unvisited = create_unvisited_nodes_list(list)
 		map = create_hash_map(list, Map.new(), 0)
-		execute_program(list, unvisited, map)
+		floyd_warshall(list, unvisited, map)
 	end
 
 	def parse_row([], results) do
@@ -49,11 +49,11 @@ defmodule Day16Part2 do
 	######################################################################################################
 	# Done with parsing data. Time to implement algorithm
 
-	def execute_program(list, unvisited, map) do
+	def floyd_warshall(list, unvisited, map) do
 		matrix = create_matrix(list)
-		matrix = step2(matrix, list, map)
-		matrix = step3(matrix, length(list))
-		execute_final(unvisited, map, matrix)
+		matrix = init_distance_of_all_immediately_adjacent(matrix, list, map)
+		matrix = nested_loop(matrix, length(list))
+		dfs_search(unvisited, map, matrix)
 	end
 
 	def create_matrix(list) do
@@ -62,22 +62,23 @@ defmodule Day16Part2 do
 		Enum.to_list(0..(size-1)) |> Enum.reduce(matrix, fn(x, acc)->Matrix.set(acc, x, x, 0) end)
 	end
 
-	def step2(matrix, list, map) do
-		weights = get_weight_list(list, map, [])
+	def init_distance_of_all_immediately_adjacent(matrix, list, map) do
+		weights = get_adjacent_valves(list, map, [])
 		Enum.reduce(weights, matrix, fn(x, acc)->{row, col}=x; Matrix.set(acc, row, col, 1) end)
 	end
-	def get_weight_list([], _, result) do List.flatten(result) end
-	def get_weight_list([head|rest], map, result) do
+	def get_adjacent_valves([], _, result) do List.flatten(result) end
+	def get_adjacent_valves([head|rest], map, result) do
 		{from, _, to} = head
 		{:ok, from} = Map.fetch(map, from)
+		#Fetch row, column index for valve from map
 		new = for item <- to do
 			{:ok, tto} = Map.fetch(map, item)
 			{from, tto}
 		end
-		get_weight_list(rest, map, [new|result])
+		get_adjacent_valves(rest, map, [new|result])
 	end
 
-	def step3(matrix, vertices) do
+	def nested_loop(matrix, vertices) do
 		loop( 0, 0, 0, vertices, matrix, :k)
 	end
 	#For step 3. Nested loop
@@ -128,14 +129,14 @@ defmodule Day16Part2 do
 	# List: {key, valverate, [to, to, to]}
 	# We need to divide the list of unvisited equally among the two people
 
-	def execute_final(unvisited, map, matrix) do
+	def dfs_search(unvisited, map, matrix) do
 		Enum.each(unvisited, fn({key, valverate})->IO.puts("Key: #{key}, Rate: #{valverate}") end)
 		combinations = Combination.combine(unvisited, div(length(unvisited),2))
-		execute_part2(unvisited, map, matrix, combinations, 0)
+		dfs(unvisited, map, matrix, combinations, 0)
 	end
 
-	def execute_part2(_, _, _, [], result) do result end
-	def execute_part2(unvisited, map, matrix, [combination|rest], result) do
+	def dfs(_, _, _, [], result) do result end
+	def dfs(unvisited, map, matrix, [combination|rest], result) do
 		node = "AA"
 		otherhalf = Enum.filter(unvisited, fn(x)-> not Enum.member?(combination, x) end)
 		first = for unvisitedNode <- otherhalf do
@@ -146,8 +147,8 @@ defmodule Day16Part2 do
 		end |> Enum.max()
 		score = first + second
 		cond do
-			score > result -> execute_part2(unvisited, map, matrix, rest, score)
-			true -> execute_part2(unvisited, map, matrix, rest, result)
+			score > result -> dfs(unvisited, map, matrix, rest, score)
+			true -> dfs(unvisited, map, matrix, rest, result)
 		end
 	end
 
