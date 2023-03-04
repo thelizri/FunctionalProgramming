@@ -1,7 +1,11 @@
 defmodule Huffman do
 
 	def sample do
-		'foo'
+		'the quick brown fox jumps over the lazy dog
+	    this is a sample text that we will use when we build
+	    up a table we will only handle lower case letters and
+	    no punctuation symbols the frequency will of course not
+	    represent english but it is probably not that far off'
 	end
 
 	def text() do
@@ -13,10 +17,12 @@ defmodule Huffman do
 		tree = tree(sample)
 		encode = encode_table(tree)
 		decode = decode_table(tree)
-		#text = text()
-		#IO.puts(text)
-		#seq = encode(text, encode)
-		#decode(seq, decode)
+		text = text()
+		IO.puts(text)
+		seq = encode(text, encode)
+		IO.inspect(seq)
+		IO.puts("Decode")
+		decode(seq, decode)
 	end
 
 	def frequency(text) do frequency(text, Map.new()) end
@@ -56,7 +62,6 @@ defmodule Huffman do
 		Map.put(map, thenode, code)
 	end
 
-	#Delete all of this
 	# create an decoding table containing the mapping from codes to characters given a Huffman tree
 	def decode_table({left, right}) do
 		map = decode_table(left, Map.new(), [0])
@@ -74,24 +79,33 @@ defmodule Huffman do
 
 	# encode the text using the mapping in the table, return a sequence of bits
 	def encode(text, table) do
-		encode(text, table, <<>>)
+		encode(text, table, [])
 	end
 
 	def encode([], table, result) do result end
 	def encode([head|rest], table, result) do
-		result = Map.get(table, head) <> result
+		result = result ++ Map.get(table, head)
 		encode(rest, table, result)
 	end
 
 	# ecode the bit sequence using the mapping in table, return a text
 	def decode(seq, table) do
-		encode(seq, table, '')
+		decode(seq, table, '', [])
+		|> to_string()
 	end
 
-	def decode([], table, result) do result end
-	def decode([head|rest], table, result) do
-		result = Map.get(table, head) ++ result
-		decode(rest, table, result)
+	def decode([], table, result, key) do result end
+	def decode([head|rest], table, result, key) do
+		key = [head|key]
+		value = Map.get(table, key)
+		if value != nil do
+			result = [value|result]
+			decode(rest, table, result, [])
+		else 
+			decode(rest, table, result, key)
+		end
 	end
+
+	
 
 end
