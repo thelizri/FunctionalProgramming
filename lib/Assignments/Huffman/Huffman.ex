@@ -46,17 +46,17 @@ defmodule Huffman do
 
 	# create an encoding table containing the mapping from characters to codes given a Huffman tree
 	def encode_table({left, right}) do
-		map = encode_table(left, Map.new(), '0')
-		encode_table(right, map, '1')
+		map = encode_table(left, Map.new(), <<0>>)
+		encode_table(right, map, <<1>>)
 	end
 
 	def encode_table({left, right}, map, code) do
-		map = encode_table(left, map, '0'++code)
-		encode_table(right, map, '1'++code)
+		map = encode_table(left, map, <<0>> <> code)
+		encode_table(right, map, <<1>> <> code)
 	end
 
 	def encode_table(thenode, map, code) do
-		Map.put(map, to_string(code), List.to_string([thenode]))
+		Map.put(map, thenode, code)
 	end
 
 	# create an decoding table containing the mapping from codes to characters given a Huffman tree
