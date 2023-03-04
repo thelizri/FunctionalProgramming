@@ -22,6 +22,13 @@ defmodule Huffman do
 		decode(seq, decode)
 	end
 
+	def frequency(text) do frequency(text, Map.new()) end
+	def frequency([], map) do map end
+	def frequency([head|rest], map) do
+		map = Map.update(map, head, 1, fn existing_value -> existing_value + 1 end)
+		frequency(rest, map)
+	end
+
 	# create a Huffman tree given a sample text
 	def tree(sample) do
 		# To implement...
@@ -46,4 +53,5 @@ defmodule Huffman do
 	def decode(seq, tree) do
 		# To implement...
 	end
+
 end
