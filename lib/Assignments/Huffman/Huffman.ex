@@ -1,11 +1,7 @@
 defmodule Huffman do
 
 	def sample do
-		'the quick brown fox jumps over the lazy dog
-		this is a sample text that we will use when we build
-		up a table we will only handle lower case letters and
-		no punctuation symbols the frequency will of course not
-		represent english but it is probably not that far off'
+		'foo'
 	end
 
 	def text() do
@@ -16,8 +12,9 @@ defmodule Huffman do
 		sample = sample()
 		tree = tree(sample)
 		encode = encode_table(tree)
-		#decode = decode_table(tree)
+		decode = decode_table(tree)
 		#text = text()
+		#IO.puts(text)
 		#seq = encode(text, encode)
 		#decode(seq, decode)
 	end
@@ -46,32 +43,55 @@ defmodule Huffman do
 
 	# create an encoding table containing the mapping from characters to codes given a Huffman tree
 	def encode_table({left, right}) do
-		map = encode_table(left, Map.new(), <<0>>)
-		encode_table(right, map, <<1>>)
+		map = encode_table(left, Map.new(), [0])
+		encode_table(right, map, [1])
 	end
 
 	def encode_table({left, right}, map, code) do
-		map = encode_table(left, map, <<0>> <> code)
-		encode_table(right, map, <<1>> <> code)
+		map = encode_table(left, map,  [0|code])
+		encode_table(right, map, [1|code])
 	end
 
 	def encode_table(thenode, map, code) do
 		Map.put(map, thenode, code)
 	end
 
+	#Delete all of this
 	# create an decoding table containing the mapping from codes to characters given a Huffman tree
-	def decode_table(tree) do
-		# To implement...
+	def decode_table({left, right}) do
+		map = decode_table(left, Map.new(), [0])
+		decode_table(right, map, [1])
+	end
+
+	def decode_table({left, right}, map, code) do
+		map = decode_table(left, map,  [0|code])
+		decode_table(right, map, [1|code])
+	end
+
+	def decode_table(thenode, map, code) do
+		Map.put(map, code, thenode)
 	end
 
 	# encode the text using the mapping in the table, return a sequence of bits
 	def encode(text, table) do
-		# To implement...
+		encode(text, table, <<>>)
+	end
+
+	def encode([], table, result) do result end
+	def encode([head|rest], table, result) do
+		result = Map.get(table, head) <> result
+		encode(rest, table, result)
 	end
 
 	# ecode the bit sequence using the mapping in table, return a text
-	def decode(seq, tree) do
-		# To implement...
+	def decode(seq, table) do
+		encode(seq, table, '')
+	end
+
+	def decode([], table, result) do result end
+	def decode([head|rest], table, result) do
+		result = Map.get(table, head) ++ result
+		decode(rest, table, result)
 	end
 
 end
