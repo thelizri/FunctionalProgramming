@@ -15,6 +15,11 @@ defmodule Huffman do
 	def test do
 		sample = sample()
 		tree = tree(sample)
+		#encode = encode_tree(tree)
+	    #decode = decode_tree(tree)
+	    #text = text()
+	    #seq = encode(text, encode)
+	    #decode(seq, decode)
 	end
 
 	def frequency(text) do frequency(text, Map.new()) end
@@ -29,6 +34,21 @@ defmodule Huffman do
 		freq = frequency(sample)
 		|> Map.to_list()
 		|> Enum.sort(fn({_, f1}, {_, f2})-> f1 <= f2 end)
+		|> huffman_tree()
 	end
+
+	  def huffman_tree([{tree, _}]), do: tree
+	  def huffman_tree([{a, af}, {b, bf} | rest]) do
+	    huffman_tree(insert({{a, b}, af + bf}, rest))
+	  end
+
+	  #Inserts it in the proper position
+	  def insert({a, af}, []), do: [{a, af}]
+	  def insert({a, af}, [{b, bf} | rest]) when af < bf do
+	    [{a, af}, {b, bf} | rest]
+	  end
+	  def insert({a, af}, [{b, bf} | rest]) do
+	    [{b, bf} | insert({a, af}, rest)]
+	  end
 
 end
