@@ -31,7 +31,13 @@ defmodule Huffman do
 
 	# create a Huffman tree given a sample text
 	def tree(sample) do
-		# To implement...
+		freq = frequency(sample)
+		|> Map.to_list()
+		|> Enum.sort(fn({_, f1}, {_, f2})-> f1 <= f2 end)
+	end
+
+	def huffman() do
+
 	end
 
 	# create an encoding table containing the mapping from characters to codes given a Huffman tree
