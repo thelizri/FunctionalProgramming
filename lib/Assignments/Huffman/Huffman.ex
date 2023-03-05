@@ -39,16 +39,16 @@ defmodule Huffman do
 
 	def huffman_tree([{tree, _}]), do: tree
 	def huffman_tree([{a, af}, {b, bf} | rest]) do
-	huffman_tree(insert({{a, b}, af + bf}, rest))
+		huffman_tree(insert({{a, b}, af + bf}, rest))
 	end
 
 	#Inserts it in the proper position
 	def insert({a, af}, []), do: [{a, af}]
 	def insert({a, af}, [{b, bf} | rest]) when af < bf do
-	[{a, af}, {b, bf} | rest]
+		[{a, af}, {b, bf} | rest]
 	end
 	def insert({a, af}, [{b, bf} | rest]) do
-	[{b, bf} | insert({a, af}, rest)]
+		[{b, bf} | insert({a, af}, rest)]
 	end
 
 	#Encode the tree to a table
