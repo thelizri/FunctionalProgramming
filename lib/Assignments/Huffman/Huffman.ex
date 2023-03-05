@@ -16,7 +16,7 @@ defmodule Huffman do
 		sample = sample()
 		tree = tree(sample)
 		encode = encode_tree(tree)
-	    #decode = decode_tree(tree)
+	    decode = decode_table(encode)
 	    #text = text()
 	    #seq = encode(text, encode)
 	    #decode(seq, decode)
@@ -60,7 +60,13 @@ defmodule Huffman do
 	  	encode_tree(right, table, [1|code])
 	  end
 	  def encode_tree(char, table, code) do
-	  	Map.put(table, to_string([char]), code)
+	  	Map.put(table, to_string([char]), Enum.reverse(code))
+	  end
+
+	  #Take our previous map and reverse it
+	  def decode_table(map) do
+	  	Map.to_list(map)
+	  	|> Enum.reduce(Map.new(), fn({key, value}, acc)-> Map.put(acc, value, key) end)
 	  end
 
 end
