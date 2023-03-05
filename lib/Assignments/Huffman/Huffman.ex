@@ -9,7 +9,7 @@ defmodule Huffman do
 	end
 
 	def text() do
-		'this is something that we should encode'
+		'this is something that we should encode world'
 	end
 
 	def test do
@@ -78,17 +78,35 @@ defmodule Huffman do
 	  #Decode our list to text
 	  def decode(list, table) do
 	  	decode(list, table, '', '')
+	  	|> Enum.reverse()
 	  end
-
+	  
 	  def decode([], table, result, key) do result end
 	  def decode([head|rest], table, result, key) do
 	  	key = key ++ [head]
 	  	temp = Map.get(table, key)
 	  	if temp != nil do
-	  		decode(rest, table, result ++ [temp], '')
+	  		decode(rest, table, [temp]++result, '')
 	  	else 
 	  		decode(rest, table, result, key)
 	  	end
 	  end
+
+	  #def decode(list, table) do
+	  #	Enum.reverse(list)
+	  #	|> decode(table, '', '')
+	  #end
+
+	  #def decode([], table, result, key) do result end
+	  #def decode([head|rest], table, result, key) do
+	  #	key = [hea#d|key]
+	  #	temp = Map.get(table, key)
+	  #	if temp != nil do
+	  #		decode(rest, table, [temp|result], '')
+	  #	else
+	  #		decode(rest, table, result, key)
+	  #	end
+	  #end
+
 
 end
