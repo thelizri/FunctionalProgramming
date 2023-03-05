@@ -15,7 +15,7 @@ defmodule Huffman do
 	def test do
 		sample = sample()
 		tree = tree(sample)
-		#encode = encode_tree(tree)
+		encode = encode_tree(tree)
 	    #decode = decode_tree(tree)
 	    #text = text()
 	    #seq = encode(text, encode)
@@ -49,6 +49,18 @@ defmodule Huffman do
 	  end
 	  def insert({a, af}, [{b, bf} | rest]) do
 	    [{b, bf} | insert({a, af}, rest)]
+	  end
+
+	  #Encode the tree to a table
+	  def encode_tree(tree) do
+	  	encode_tree(tree, Map.new(), [])
+	  end
+	  def encode_tree({left, right}, table, code) do
+	  	table = encode_tree(left, table, [0|code])
+	  	encode_tree(right, table, [1|code])
+	  end
+	  def encode_tree(char, table, code) do
+	  	Map.put(table, to_string([char]), code)
 	  end
 
 end
