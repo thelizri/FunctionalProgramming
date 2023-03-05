@@ -92,20 +92,4 @@ defmodule Huffman do
 		end
 	end
 
-	#def decode(list, table) do
-	#	Enum.reverse(list)
-	#	|> decode(table, '', '')
-	#end
-
-	#def decode([], table, result, key) do result end
-	#def decode([head|rest], table, result, key) do
-	#	key = [hea#d|key]
-	#	temp = Map.get(table, key)
-	#	if temp != nil do
-	#		decode(rest, table, [temp|result], '')
-	#	else
-	#		decode(rest, table, result, key)
-	#	end
-	#end
-
 end
