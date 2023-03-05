@@ -17,9 +17,9 @@ defmodule Huffman do
 		tree = tree(sample)
 		encode = encode_tree(tree)
 	    decode = decode_table(encode)
-	    #text = text()
-	    #seq = encode(text, encode)
-	    #decode(seq, decode)
+	    text = text()
+	    seq = encode(text, encode)
+	    decode(seq, decode) |> to_string()
 	end
 
 	def frequency(text) do frequency(text, Map.new()) end
@@ -60,13 +60,35 @@ defmodule Huffman do
 	  	encode_tree(right, table, [1|code])
 	  end
 	  def encode_tree(char, table, code) do
-	  	Map.put(table, to_string([char]), Enum.reverse(code))
+	  	Map.put(table, char, Enum.reverse(code))
 	  end
 
 	  #Take our previous map and reverse it
 	  def decode_table(map) do
 	  	Map.to_list(map)
 	  	|> Enum.reduce(Map.new(), fn({key, value}, acc)-> Map.put(acc, value, key) end)
+	  end
+
+	  #Encode our text
+	  def encode(text, table) do#
+	  	Enum.map(text, fn(x)-> Map.get(table, x) end)
+	  	|> List.flatten()
+	  end
+
+	  #Decode our list to text
+	  def decode(list, table) do
+	  	decode(list, table, '', '')
+	  end
+
+	  def decode([], table, result, key) do result end
+	  def decode([head|rest], table, result, key) do
+	  	key = key ++ [head]
+	  	temp = Map.get(table, key)
+	  	if temp != nil do
+	  		decode(rest, table, result ++ [temp], '')
+	  	else 
+	  		decode(rest, table, result, key)
+	  	end
 	  end
 
 end
