@@ -37,76 +37,75 @@ defmodule Huffman do
 		|> huffman_tree()
 	end
 
-	  def huffman_tree([{tree, _}]), do: tree
-	  def huffman_tree([{a, af}, {b, bf} | rest]) do
-	    huffman_tree(insert({{a, b}, af + bf}, rest))
-	  end
+	def huffman_tree([{tree, _}]), do: tree
+	def huffman_tree([{a, af}, {b, bf} | rest]) do
+	huffman_tree(insert({{a, b}, af + bf}, rest))
+	end
 
-	  #Inserts it in the proper position
-	  def insert({a, af}, []), do: [{a, af}]
-	  def insert({a, af}, [{b, bf} | rest]) when af < bf do
-	    [{a, af}, {b, bf} | rest]
-	  end
-	  def insert({a, af}, [{b, bf} | rest]) do
-	    [{b, bf} | insert({a, af}, rest)]
-	  end
+	#Inserts it in the proper position
+	def insert({a, af}, []), do: [{a, af}]
+	def insert({a, af}, [{b, bf} | rest]) when af < bf do
+	[{a, af}, {b, bf} | rest]
+	end
+	def insert({a, af}, [{b, bf} | rest]) do
+	[{b, bf} | insert({a, af}, rest)]
+	end
 
-	  #Encode the tree to a table
-	  def encode_tree(tree) do
-	  	encode_tree(tree, Map.new(), [])
-	  end
-	  def encode_tree({left, right}, table, code) do
-	  	table = encode_tree(left, table, [0|code])
-	  	encode_tree(right, table, [1|code])
-	  end
-	  def encode_tree(char, table, code) do
-	  	Map.put(table, char, Enum.reverse(code))
-	  end
+	#Encode the tree to a table
+	def encode_tree(tree) do
+		encode_tree(tree, Map.new(), [])
+	end
+	def encode_tree({left, right}, table, code) do
+		table = encode_tree(left, table, [0|code])
+		encode_tree(right, table, [1|code])
+	end
+	def encode_tree(char, table, code) do
+		Map.put(table, char, Enum.reverse(code))
+	end
 
-	  #Take our previous map and reverse it
-	  def decode_table(map) do
-	  	Map.to_list(map)
-	  	|> Enum.reduce(Map.new(), fn({key, value}, acc)-> Map.put(acc, value, key) end)
-	  end
+	#Take our previous map and reverse it
+	def decode_table(map) do
+		Map.to_list(map)
+		|> Enum.reduce(Map.new(), fn({key, value}, acc)-> Map.put(acc, value, key) end)
+	end
 
-	  #Encode our text
-	  def encode(text, table) do#
-	  	Enum.map(text, fn(x)-> Map.get(table, x) end)
-	  	|> List.flatten()
-	  end
+	#Encode our text
+	def encode(text, table) do#
+		Enum.map(text, fn(x)-> Map.get(table, x) end)
+		|> List.flatten()
+	end
 
-	  #Decode our list to text
-	  def decode(list, table) do
-	  	decode(list, table, '', '')
-	  	|> Enum.reverse()
-	  end
-	  
-	  def decode([], table, result, key) do result end
-	  def decode([head|rest], table, result, key) do
-	  	key = key ++ [head]
-	  	temp = Map.get(table, key)
-	  	if temp != nil do
-	  		decode(rest, table, [temp]++result, '')
-	  	else 
-	  		decode(rest, table, result, key)
-	  	end
-	  end
+	#Decode our list to text
+	def decode(list, table) do
+		decode(list, table, '', '')
+		|> Enum.reverse()
+	end
 
-	  #def decode(list, table) do
-	  #	Enum.reverse(list)
-	  #	|> decode(table, '', '')
-	  #end
+	def decode([], table, result, key) do result end
+	def decode([head|rest], table, result, key) do
+		key = key ++ [head]
+		temp = Map.get(table, key)
+		if temp != nil do
+			decode(rest, table, [temp]++result, '')
+		else 
+			decode(rest, table, result, key)
+		end
+	end
 
-	  #def decode([], table, result, key) do result end
-	  #def decode([head|rest], table, result, key) do
-	  #	key = [hea#d|key]
-	  #	temp = Map.get(table, key)
-	  #	if temp != nil do
-	  #		decode(rest, table, [temp|result], '')
-	  #	else
-	  #		decode(rest, table, result, key)
-	  #	end
-	  #end
+	#def decode(list, table) do
+	#	Enum.reverse(list)
+	#	|> decode(table, '', '')
+	#end
 
+	#def decode([], table, result, key) do result end
+	#def decode([head|rest], table, result, key) do
+	#	key = [hea#d|key]
+	#	temp = Map.get(table, key)
+	#	if temp != nil do
+	#		decode(rest, table, [temp|result], '')
+	#	else
+	#		decode(rest, table, result, key)
+	#	end
+	#end
 
 end
