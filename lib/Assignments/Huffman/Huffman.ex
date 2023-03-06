@@ -22,11 +22,8 @@ defmodule Huffman do
 	    decode(seq, decode) |> to_string()
 	end
 
-	def frequency(text) do frequency(text, Map.new()) end
-	def frequency([], map) do map end
-	def frequency([head|rest], map) do
-		map = Map.update(map, head, 1, fn existing_value -> existing_value + 1 end)
-		frequency(rest, map)
+	def frequency(text) do
+		Enum.reduce(text, Map.new(), fn(char, acc)-> Map.update(acc, char, 1, fn existing_value -> existing_value + 1 end) end)
 	end
 
 	# create a Huffman tree given a sample text
