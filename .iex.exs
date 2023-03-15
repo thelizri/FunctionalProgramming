@@ -19,7 +19,7 @@ IEx.configure(
     pretty: true,
     limit: :infinity,
     width: 300,
-    charlists: :as_lists
+    #charlists: :as_lists
   ],
   width: 300
 )
