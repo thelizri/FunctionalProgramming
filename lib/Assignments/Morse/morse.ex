@@ -93,9 +93,9 @@ defmodule Morse do
 	def decode([], _, acc) do acc end
 	def decode(text=[head|rest], {:node, v, left, right}, acc) do
 		cond do
-			head == 32 -> acc = [v|acc]
+			head == 32 or head == 10 -> acc = [v|acc]
 				decode(rest, decode_table(), acc)
-			head == ?_ -> decode(rest, left, acc)
+			head == ?_ or head == ?- -> decode(rest, left, acc)
 			head == ?. -> decode(rest, right, acc)
 			true -> IO.puts("Error")
 		end
